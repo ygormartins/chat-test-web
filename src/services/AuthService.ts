@@ -5,10 +5,14 @@ import {
   AuthenticationDetails,
   ICognitoUserData,
   CognitoUserSession,
+  CognitoUserAttribute,
+  ISignUpResult,
 } from "amazon-cognito-identity-js";
 
 /*---------- Types ----------*/
 type loginReturnResult = "SUCCESS" | "CHANGE_PASSWORD";
+
+type signUpReturnResult = "SUCCESS" | "CONFIRM_EMAIL";
 
 /*---------- Interfaces ----------*/
 export interface UserAttributes {
@@ -20,6 +24,11 @@ export interface LoginAuthResult {
   result: loginReturnResult;
   userObject: CognitoUser;
   userInfo?: CognitoUserSession;
+}
+
+export interface SignUpAuthResult {
+  result: signUpReturnResult;
+  signUpResult?: ISignUpResult;
 }
 
 export interface SolveNewPasswordResult {
@@ -34,7 +43,8 @@ const poolData = {
 
 const userPoolClient = new CognitoUserPool(poolData);
 
-export const signIn = async (
+export const authenticateUser = async (
+  user: CognitoUser,
   email: string,
   password: string
 ): Promise<LoginAuthResult> => {
@@ -42,13 +52,6 @@ export const signIn = async (
     Username: email,
     Password: password,
   });
-
-  const userData: ICognitoUserData = {
-    Pool: userPoolClient,
-    Username: email,
-  };
-
-  const user = new CognitoUser(userData);
 
   return new Promise((resolve, reject) => {
     user.authenticateUser(authDetails, {
@@ -70,6 +73,74 @@ export const signIn = async (
           userObject: user,
         });
       },
+    });
+  });
+};
+
+export const signIn = async (
+  email: string,
+  password: string
+): Promise<LoginAuthResult> => {
+  const userData: ICognitoUserData = {
+    Pool: userPoolClient,
+    Username: email,
+  };
+
+  const user = new CognitoUser(userData);
+
+  return authenticateUser(user, email, password);
+};
+
+export const signUp = async (
+  name: string,
+  email: string,
+  password: string
+): Promise<SignUpAuthResult> => {
+  const emailAttribute = new CognitoUserAttribute({
+    Name: "email",
+    Value: email,
+  });
+
+  const nameAttribute = new CognitoUserAttribute({
+    Name: "name",
+    Value: name,
+  });
+
+  return new Promise((resolve, reject) => {
+    userPoolClient.signUp(
+      email,
+      password,
+      [emailAttribute, nameAttribute],
+      [],
+      (error, result) => {
+        if (error) {
+          reject(error);
+        }
+
+        if (!result?.userConfirmed) {
+          resolve({
+            result: "CONFIRM_EMAIL",
+            signUpResult: result,
+          });
+        }
+
+        resolve({
+          result: "SUCCESS",
+          signUpResult: result,
+        });
+      }
+    );
+  });
+};
+
+export const confirmEmail = async (code: string, user: CognitoUser) => {
+  return new Promise((resolve, reject) => {
+    user.confirmRegistration(code, true, (error, result) => {
+      if (error) {
+        reject(error);
+      }
+
+      resolve(result);
     });
   });
 };

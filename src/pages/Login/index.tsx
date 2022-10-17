@@ -63,7 +63,7 @@ const Login: React.FC = () => {
         signInResultState?.userObject
       );
 
-      console.log(userSession);
+      // TODO: save state
     } catch (error) {
       const typedError = error as { message: string };
 
@@ -78,7 +78,7 @@ const Login: React.FC = () => {
       <FieldsArea>
         <TextInput
           type="email"
-          label="Email"
+          label="Email address"
           value={email}
           onTextChange={setEmail}
           placeholder="Enter your email address"
