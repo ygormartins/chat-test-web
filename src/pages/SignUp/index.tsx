@@ -19,7 +19,7 @@ import {
 } from "@/services/AuthService";
 
 /*---------- Styles ----------*/
-import { Container, FieldsArea, FormContainer, SignInLink } from "./styles";
+import { FieldsArea, FormContainer, SignInLink } from "./styles";
 
 const SignUp: React.FC = () => {
   /*---------- Hooks ----------*/
@@ -187,11 +187,9 @@ const SignUp: React.FC = () => {
   );
 
   return (
-    <Container>
-      <FormContainer>
-        {!confirmCodeStep ? renderSignUpForm() : renderConfirmCodeForm()}
-      </FormContainer>
-    </Container>
+    <FormContainer>
+      {!confirmCodeStep ? renderSignUpForm() : renderConfirmCodeForm()}
+    </FormContainer>
   );
 };
 

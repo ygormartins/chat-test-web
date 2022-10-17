@@ -14,9 +14,10 @@ export const ButtonContainer = styled.button<{
   font-weight: bold;
   padding: 0.5rem 1rem;
   align-self: center;
-  border-radius: 0.25rem;
+  border-radius: 1000px;
   cursor: pointer;
   position: relative;
+  box-shadow: 0 0 0.25rem 0.125rem #00000016;
 
   &:hover {
     opacity: 0.75;

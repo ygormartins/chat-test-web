@@ -18,7 +18,7 @@ import {
 } from "@/services/AuthService";
 
 /*---------- Styles ----------*/
-import { Container, FieldsArea, FormContainer, SignUpLink } from "./styles";
+import { FieldsArea, FormContainer, SignUpLink } from "./styles";
 
 const Login: React.FC = () => {
   /*---------- Hooks ----------*/
@@ -158,11 +158,9 @@ const Login: React.FC = () => {
   );
 
   return (
-    <Container>
-      <FormContainer>
-        {!newPasswordStep ? renderSignInForm() : renderNewPasswordForm()}
-      </FormContainer>
-    </Container>
+    <FormContainer>
+      {!newPasswordStep ? renderSignInForm() : renderNewPasswordForm()}
+    </FormContainer>
   );
 };
 
