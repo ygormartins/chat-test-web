@@ -1,5 +1,6 @@
 /*---------- External ----------*/
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 export const Container = styled.div`
   height: 100vh;
@@ -29,4 +30,15 @@ export const FieldsArea = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+`;
+
+export const SignUpLink = styled(Link)`
+  align-self: center;
+  font-weight: bold;
+  color: teal;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;

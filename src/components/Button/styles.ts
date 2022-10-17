@@ -1,17 +1,22 @@
 /*---------- External ----------*/
 import styled from "styled-components";
 
-export const ButtonContainer = styled.button`
+export const ButtonContainer = styled.button<{
+  loading: boolean;
+  disabled: boolean;
+}>`
   border: none;
   outline: none;
   background-color: teal;
-  color: white;
+  opacity: ${({ disabled }) => (disabled ? "0.5" : "1.0")};
+  color: ${({ loading }) => (loading ? "transparent" : "white")};
   font-size: 1rem;
   font-weight: bold;
   padding: 0.5rem 1rem;
   align-self: center;
   border-radius: 0.25rem;
   cursor: pointer;
+  position: relative;
 
   &:hover {
     opacity: 0.75;
@@ -20,4 +25,12 @@ export const ButtonContainer = styled.button`
   &:focus {
     outline: 0.125rem solid black;
   }
+`;
+
+export const LoadingContainer = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

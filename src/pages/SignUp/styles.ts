@@ -1,4 +1,5 @@
 /*---------- External ----------*/
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -29,4 +30,15 @@ export const FieldsArea = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+`;
+
+export const SignInLink = styled(Link)`
+  align-self: center;
+  font-weight: bold;
+  color: teal;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;

@@ -1,6 +1,10 @@
 /*---------- External ----------*/
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import swal from "sweetalert2";
+
+/*---------- Contexts ----------*/
+import { AuthContext } from "@/contexts/Auth";
 
 /*---------- Components ----------*/
 import Button from "@/components/Button";
@@ -15,18 +19,36 @@ import {
 } from "@/services/AuthService";
 
 /*---------- Styles ----------*/
-import { Container, FieldsArea, FormContainer } from "./styles";
+import { Container, FieldsArea, FormContainer, SignInLink } from "./styles";
 
 const SignUp: React.FC = () => {
+  /*---------- Hooks ----------*/
+  const navigate = useNavigate();
+
+  /*---------- Contexts ----------*/
+  const { status, storeSession } = useContext(AuthContext);
+
   /*---------- States ----------*/
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [confirmCodeStep, setConfirmCodeStep] = useState<boolean>(false);
   const [confirmationCode, setConfirmationCode] = useState<string>("");
+  const [confirmCodeStep, setConfirmCodeStep] = useState<boolean>(false);
+  const [isLoadingSignup, setIsLoadingSignup] = useState<boolean>(false);
+  const [isLoadingConfirmation, setIsLoadingConfirmation] =
+    useState<boolean>(false);
   const [signUpResultState, setSignUpResultState] =
     useState<SignUpAuthResult>();
+
+  /*---------- Effects ----------*/
+  useEffect(() => {
+    if (!navigate) return;
+
+    if (status === "AUTHENTICATED") {
+      navigate("/");
+    }
+  }, [status, navigate]);
 
   /*---------- Handlers ----------*/
   const showErrorAlert = (errorMessage: string) => {
@@ -42,12 +64,16 @@ const SignUp: React.FC = () => {
       return;
     }
 
+    setIsLoadingSignup(true);
+
     try {
       const signUpResult = await signUp(name, email, newPassword);
       setSignUpResultState(signUpResult);
 
       if (signUpResult.result === "CONFIRM_EMAIL") {
+        setIsLoadingSignup(false);
         setConfirmCodeStep(true);
+
         return;
       }
 
@@ -57,10 +83,14 @@ const SignUp: React.FC = () => {
 
       showErrorAlert(typedError.message);
     }
+
+    setIsLoadingSignup(false);
   };
 
   const handleConfirmEmail = async () => {
     if (!signUpResultState?.signUpResult?.user) return;
+
+    setIsLoadingConfirmation(true);
 
     try {
       await confirmEmail(
@@ -74,6 +104,8 @@ const SignUp: React.FC = () => {
 
       showErrorAlert(typedError.message);
     }
+
+    setIsLoadingConfirmation(false);
   };
 
   const registerSession = async () => {
@@ -86,7 +118,9 @@ const SignUp: React.FC = () => {
         newPassword
       );
 
-      // TODO: save state
+      if (authResult.userInfo && storeSession) {
+        storeSession(authResult.userInfo);
+      }
     } catch (error) {
       const typedError = error as { message: string };
       showErrorAlert(typedError.message);
@@ -127,7 +161,10 @@ const SignUp: React.FC = () => {
           placeholder="Confirm your new password"
         />
       </FieldsArea>
-      <Button onClick={handleSignUp}>Sign up</Button>
+      <Button loading={isLoadingSignup} onClick={handleSignUp}>
+        Sign up
+      </Button>
+      <SignInLink to="/login">I already have an account</SignInLink>
     </>
   );
 
@@ -143,7 +180,9 @@ const SignUp: React.FC = () => {
           placeholder="Enter the confirmation code you've received in your inbox"
         />
       </FieldsArea>
-      <Button onClick={handleConfirmEmail}>Confirm</Button>
+      <Button loading={isLoadingConfirmation} onClick={handleConfirmEmail}>
+        Confirm
+      </Button>
     </>
   );
 

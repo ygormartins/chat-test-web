@@ -1,6 +1,10 @@
 /*---------- External ----------*/
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import swal from "sweetalert2";
+
+/*---------- Contexts ----------*/
+import { AuthContext } from "@/contexts/Auth";
 
 /*---------- Components ----------*/
 import Button from "@/components/Button";
@@ -14,16 +18,34 @@ import {
 } from "@/services/AuthService";
 
 /*---------- Styles ----------*/
-import { Container, FieldsArea, FormContainer } from "./styles";
+import { Container, FieldsArea, FormContainer, SignUpLink } from "./styles";
 
 const Login: React.FC = () => {
+  /*---------- Hooks ----------*/
+  const navigate = useNavigate();
+
+  /*---------- Contexts ----------*/
+  const { status, storeSession } = useContext(AuthContext);
+
   /*---------- States ----------*/
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [isLoadingSignIn, setIsLoadingSignIn] = useState<boolean>(false);
   const [newPasswordStep, setIsNewPasswordStep] = useState<boolean>(false);
   const [signInResultState, setSignInResultState] = useState<LoginAuthResult>();
+  const [isLoadingNewPassword, setIsLoadingNewPassword] =
+    useState<boolean>(false);
+
+  /*---------- Effects ----------*/
+  useEffect(() => {
+    if (!navigate) return;
+
+    if (status === "AUTHENTICATED") {
+      return navigate("/");
+    }
+  }, [status, navigate]);
 
   /*---------- Handlers ----------*/
   const showErrorAlert = (errorMessage: string) => {
@@ -34,6 +56,8 @@ const Login: React.FC = () => {
   };
 
   const handleSignIn = async () => {
+    setIsLoadingSignIn(true);
+
     try {
       const signInResult = await signIn(email, password);
       setSignInResultState(signInResult);
@@ -42,11 +66,17 @@ const Login: React.FC = () => {
         setIsNewPasswordStep(true);
         return;
       }
+
+      if (signInResult.userInfo && storeSession) {
+        storeSession(signInResult.userInfo);
+      }
     } catch (error) {
       const typedError = error as { message: string };
 
       showErrorAlert(typedError.message);
     }
+
+    setIsLoadingSignIn(false);
   };
 
   const handleChangePassword = async () => {
@@ -57,18 +87,22 @@ const Login: React.FC = () => {
       return;
     }
 
+    setIsLoadingNewPassword(true);
+
     try {
       const userSession = await solveNewPasswordRequired(
         newPassword,
         signInResultState?.userObject
       );
 
-      // TODO: save state
+      if (storeSession) storeSession(userSession.userInfo);
     } catch (error) {
       const typedError = error as { message: string };
 
       showErrorAlert(typedError.message);
     }
+
+    setIsLoadingNewPassword(false);
   };
 
   /*---------- Renders ----------*/
@@ -91,7 +125,10 @@ const Login: React.FC = () => {
           placeholder="Enter your password"
         />
       </FieldsArea>
-      <Button onClick={handleSignIn}>Sign in</Button>
+      <Button loading={isLoadingSignIn} onClick={handleSignIn}>
+        Sign in
+      </Button>
+      <SignUpLink to="/register">Create an account</SignUpLink>
     </>
   );
 
@@ -114,7 +151,9 @@ const Login: React.FC = () => {
           placeholder="Confirm your new password"
         />
       </FieldsArea>
-      <Button onClick={handleChangePassword}>Set new password</Button>
+      <Button loading={isLoadingNewPassword} onClick={handleChangePassword}>
+        Set new password
+      </Button>
     </>
   );
 
