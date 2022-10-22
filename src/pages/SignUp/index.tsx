@@ -1,5 +1,5 @@
 /*---------- External ----------*/
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import swal from "sweetalert2";
 
@@ -10,14 +10,6 @@ import { AuthContext } from "@/contexts/Auth";
 import Button from "@/components/Button";
 import TextInput from "@/components/TextInput";
 
-/*---------- Services ----------*/
-import {
-  signUp,
-  authenticateUser,
-  confirmEmail,
-  SignUpAuthResult,
-} from "@/services/AuthService";
-
 /*---------- Styles ----------*/
 import { FieldsArea, FormContainer, SignInLink } from "./styles";
 
@@ -26,7 +18,7 @@ const SignUp: React.FC = () => {
   const navigate = useNavigate();
 
   /*---------- Contexts ----------*/
-  const { status, storeSession } = useContext(AuthContext);
+  const { status, signUp, confirmEmail } = useContext(AuthContext);
 
   /*---------- States ----------*/
   const [name, setName] = useState<string>("");
@@ -38,8 +30,6 @@ const SignUp: React.FC = () => {
   const [isLoadingSignup, setIsLoadingSignup] = useState<boolean>(false);
   const [isLoadingConfirmation, setIsLoadingConfirmation] =
     useState<boolean>(false);
-  const [signUpResultState, setSignUpResultState] =
-    useState<SignUpAuthResult>();
 
   /*---------- Effects ----------*/
   useEffect(() => {
@@ -58,7 +48,9 @@ const SignUp: React.FC = () => {
     });
   };
 
-  const handleSignUp = async () => {
+  const handleSignUp = useCallback(async () => {
+    if (!signUp) return;
+
     if (newPassword !== confirmPassword) {
       showErrorAlert("The passwords must match!");
       return;
@@ -66,66 +58,43 @@ const SignUp: React.FC = () => {
 
     setIsLoadingSignup(true);
 
-    try {
-      const signUpResult = await signUp(name, email, newPassword);
-      setSignUpResultState(signUpResult);
+    const signUpStatus = await signUp(email, newPassword, { name });
 
-      if (signUpResult.result === "CONFIRM_EMAIL") {
-        setIsLoadingSignup(false);
+    switch (signUpStatus?.result) {
+      case "CONFIRM_EMAIL":
         setConfirmCodeStep(true);
-
-        return;
-      }
-
-      await registerSession();
-    } catch (error) {
-      const typedError = error as { message: string };
-
-      showErrorAlert(typedError.message);
+        break;
+      case "ERROR":
+        showErrorAlert(signUpStatus?.errorMessage || "Unknown Error");
+        break;
     }
 
     setIsLoadingSignup(false);
-  };
+  }, [
+    signUp,
+    email,
+    newPassword,
+    name,
+    setIsLoadingSignup,
+    setConfirmCodeStep,
+    confirmPassword,
+  ]);
 
-  const handleConfirmEmail = async () => {
-    if (!signUpResultState?.signUpResult?.user) return;
+  const handleConfirmEmail = useCallback(async () => {
+    if (!confirmEmail) return;
 
     setIsLoadingConfirmation(true);
 
-    try {
-      await confirmEmail(
-        confirmationCode,
-        signUpResultState?.signUpResult.user
-      );
+    const confirmationStatus = await confirmEmail(confirmationCode);
 
-      await registerSession();
-    } catch (error) {
-      const typedError = error as { message: string };
-
-      showErrorAlert(typedError.message);
+    switch (confirmationStatus?.result) {
+      case "ERROR":
+        showErrorAlert(confirmationStatus?.errorMessage || "Unknown Error");
+        break;
     }
 
     setIsLoadingConfirmation(false);
-  };
-
-  const registerSession = async () => {
-    if (!signUpResultState?.signUpResult?.user) return;
-
-    try {
-      const authResult = await authenticateUser(
-        signUpResultState?.signUpResult?.user,
-        email,
-        newPassword
-      );
-
-      if (authResult.userInfo && storeSession) {
-        storeSession(authResult.userInfo);
-      }
-    } catch (error) {
-      const typedError = error as { message: string };
-      showErrorAlert(typedError.message);
-    }
-  };
+  }, [confirmEmail, confirmationCode]);
 
   /*---------- Renders ----------*/
   const renderSignUpForm = () => (

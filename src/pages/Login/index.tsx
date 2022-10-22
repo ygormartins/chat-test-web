@@ -1,5 +1,5 @@
 /*---------- External ----------*/
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import swal from "sweetalert2";
 
@@ -10,13 +10,6 @@ import { AuthContext } from "@/contexts/Auth";
 import Button from "@/components/Button";
 import TextInput from "@/components/TextInput";
 
-/*---------- Services ----------*/
-import {
-  LoginAuthResult,
-  signIn,
-  solveNewPasswordRequired,
-} from "@/services/AuthService";
-
 /*---------- Styles ----------*/
 import { FieldsArea, FormContainer, SignUpLink } from "./styles";
 
@@ -25,18 +18,12 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   /*---------- Contexts ----------*/
-  const { status, storeSession } = useContext(AuthContext);
+  const { status, signIn } = useContext(AuthContext);
 
   /*---------- States ----------*/
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [newPassword, setNewPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [isLoadingSignIn, setIsLoadingSignIn] = useState<boolean>(false);
-  const [newPasswordStep, setIsNewPasswordStep] = useState<boolean>(false);
-  const [signInResultState, setSignInResultState] = useState<LoginAuthResult>();
-  const [isLoadingNewPassword, setIsLoadingNewPassword] =
-    useState<boolean>(false);
 
   /*---------- Effects ----------*/
   useEffect(() => {
@@ -55,59 +42,22 @@ const Login: React.FC = () => {
     });
   };
 
-  const handleSignIn = async () => {
+  const handleSignIn = useCallback(async () => {
+    if (!signIn) return;
+
     setIsLoadingSignIn(true);
 
-    try {
-      const signInResult = await signIn(email, password);
-      setSignInResultState(signInResult);
+    const signInStatus = await signIn(email, password);
 
-      if (signInResult.result === "CHANGE_PASSWORD") {
-        setIsNewPasswordStep(true);
-        return;
-      }
-
-      if (signInResult.userInfo && storeSession) {
-        storeSession(signInResult.userInfo);
-      }
-    } catch (error) {
-      const typedError = error as { message: string };
-
-      showErrorAlert(typedError.message);
+    if (signInStatus.result !== "SUCCESS") {
+      showErrorAlert(signInStatus?.errorMessage || "Unknown Error");
     }
 
     setIsLoadingSignIn(false);
-  };
+  }, [signIn, email, password]);
 
-  const handleChangePassword = async () => {
-    if (!signInResultState?.userObject) return;
-
-    if (newPassword !== confirmPassword) {
-      showErrorAlert("The passwords must match!");
-      return;
-    }
-
-    setIsLoadingNewPassword(true);
-
-    try {
-      const userSession = await solveNewPasswordRequired(
-        newPassword,
-        signInResultState?.userObject
-      );
-
-      if (storeSession) storeSession(userSession.userInfo);
-    } catch (error) {
-      const typedError = error as { message: string };
-
-      showErrorAlert(typedError.message);
-    }
-
-    setIsLoadingNewPassword(false);
-  };
-
-  /*---------- Renders ----------*/
-  const renderSignInForm = () => (
-    <>
+  return (
+    <FormContainer>
       <h1>Login</h1>
       <FieldsArea>
         <TextInput
@@ -129,37 +79,6 @@ const Login: React.FC = () => {
         Sign in
       </Button>
       <SignUpLink to="/register">Create an account</SignUpLink>
-    </>
-  );
-
-  const renderNewPasswordForm = () => (
-    <>
-      <h1>Choose your new password</h1>
-      <FieldsArea>
-        <TextInput
-          type="password"
-          label="New password"
-          value={newPassword}
-          onTextChange={setNewPassword}
-          placeholder="Enter your new password"
-        />
-        <TextInput
-          type="password"
-          label="Confirm password"
-          value={confirmPassword}
-          onTextChange={setConfirmPassword}
-          placeholder="Confirm your new password"
-        />
-      </FieldsArea>
-      <Button loading={isLoadingNewPassword} onClick={handleChangePassword}>
-        Set new password
-      </Button>
-    </>
-  );
-
-  return (
-    <FormContainer>
-      {!newPasswordStep ? renderSignInForm() : renderNewPasswordForm()}
     </FormContainer>
   );
 };

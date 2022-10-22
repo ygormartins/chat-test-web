@@ -2,14 +2,14 @@
 import styled from "styled-components";
 
 export const ButtonContainer = styled.button<{
-  loading: boolean;
+  loadingState: boolean;
   disabled: boolean;
 }>`
   border: none;
   outline: none;
   background-color: teal;
   opacity: ${({ disabled }) => (disabled ? "0.5" : "1.0")};
-  color: ${({ loading }) => (loading ? "transparent" : "white")};
+  color: ${({ loadingState }) => (loadingState ? "transparent" : "white")};
   font-size: 1rem;
   font-weight: bold;
   padding: 0.5rem 1rem;

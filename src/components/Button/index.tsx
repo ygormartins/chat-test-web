@@ -24,7 +24,7 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <ButtonContainer
       disabled={disabled}
-      loading={loading}
+      loadingState={loading}
       onClick={handleClick}
     >
       {children}
