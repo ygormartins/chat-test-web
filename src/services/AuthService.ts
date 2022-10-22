@@ -23,7 +23,7 @@ import {
 import { isJwtExpired } from "jwt-check-expiration";
 
 export const CognitoClient = Axios.create({
-  baseURL: "https://cognito-idp.us-east-1.amazonaws.com",
+  baseURL: import.meta.env.VITE_COGNITO_IDP_ENDPOINT,
   headers: {
     "Content-Type": "application/x-amz-json-1.1",
   },
@@ -33,12 +33,13 @@ export const signIn = async (
   email: string,
   password: string
 ): Promise<ILoginAuthResult> => {
+  console.log(import.meta.env);
   try {
     const { data: authResult } = await CognitoClient.post<IInitiateAuth>(
       "/",
       {
         AuthFlow: "USER_PASSWORD_AUTH",
-        ClientId: "ib4d59vkkp5aki8fuv8n9dmm3",
+        ClientId: import.meta.env.VITE_COGNITO_CLIENT_ID,
         AuthParameters: {
           USERNAME: email,
           PASSWORD: password,
@@ -95,7 +96,7 @@ export const refreshSession = async (
       "/",
       {
         AuthFlow: "REFRESH_TOKEN_AUTH",
-        ClientId: "ib4d59vkkp5aki8fuv8n9dmm3",
+        ClientId: import.meta.env.VITE_COGNITO_CLIENT_ID,
         AuthParameters: {
           REFRESH_TOKEN: refreshToken,
           SECRET_HASH: generateSecretHash(username),
@@ -165,7 +166,7 @@ export const signUp = async (
       {
         Username: email,
         Password: password,
-        ClientId: "ib4d59vkkp5aki8fuv8n9dmm3",
+        ClientId: import.meta.env.VITE_COGNITO_CLIENT_ID,
         SecretHash: generateSecretHash(email),
         UserAttributes: [
           ...attributesList,
@@ -209,7 +210,7 @@ export const confirmEmail = async (
       {
         ConfirmationCode: code,
         Username: email,
-        ClientId: "ib4d59vkkp5aki8fuv8n9dmm3",
+        ClientId: import.meta.env.VITE_COGNITO_CLIENT_ID,
         SecretHash: generateSecretHash(email),
       },
       {
