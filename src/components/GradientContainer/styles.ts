@@ -7,7 +7,11 @@ export const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem 1rem;
+  padding: 1.5rem;
   background: teal;
   background: linear-gradient(45deg, teal 0%, aquamarine 100%);
+
+  @media screen and (max-width: 800px) {
+    padding: 0;
+  }
 `;

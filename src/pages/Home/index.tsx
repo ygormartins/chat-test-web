@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 /*---------- Contexts ----------*/
 import { AuthContext } from "@/contexts/Auth";
 
+/*---------- Styles ----------*/
+import { ChatsPanel, Container } from "./styles";
+
 const Home: React.FC = () => {
   /*---------- Hooks ----------*/
   const navigate = useNavigate();
@@ -21,7 +24,11 @@ const Home: React.FC = () => {
     }
   }, [status, navigate]);
 
-  return <h1>Oi</h1>;
+  return (
+    <Container>
+      <ChatsPanel></ChatsPanel>
+    </Container>
+  );
 };
 
 export default Home;

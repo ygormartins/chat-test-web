@@ -16,6 +16,13 @@ export const FormContainer = styled.div`
   @media screen and (max-width: 1200px) {
     width: 100%;
   }
+
+  @media screen and (max-width: 800px) {
+    border-radius: 0;
+    height: 100%;
+    max-width: unset;
+    padding: 4rem 2rem;
+  }
 `;
 
 export const FieldsArea = styled.div`
