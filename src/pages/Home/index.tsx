@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 /*---------- Contexts ----------*/
 import { AuthContext } from "@/contexts/Auth";
 
+/*---------- Components ----------*/
+import ProfileHeader from "@/components/ProfileHeader";
+
 /*---------- Styles ----------*/
 import { ChatsPanel, Container } from "./styles";
 
@@ -13,7 +16,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
 
   /*---------- Contexts ----------*/
-  const { status } = useContext(AuthContext);
+  const { status, user } = useContext(AuthContext);
 
   /*---------- Effects ----------*/
   useEffect(() => {
@@ -26,7 +29,7 @@ const Home: React.FC = () => {
 
   return (
     <Container>
-      <ChatsPanel></ChatsPanel>
+      <ChatsPanel>{user ? <ProfileHeader userInfo={user} /> : null}</ChatsPanel>
     </Container>
   );
 };
