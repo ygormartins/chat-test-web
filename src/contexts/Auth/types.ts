@@ -3,11 +3,11 @@ import { ReactNode } from "react";
 
 /*---------- Types ----------*/
 import {
-  IUser,
   IUserSignupAttributes,
   ILoginAuthResult,
   ISignUpAuthResult,
 } from "@/@types/auth";
+import { IUser } from "@/@types/user";
 
 export type AUTH_STATUS = "AUTHENTICATED" | "UNAUTHENTICATED" | "LOADING";
 

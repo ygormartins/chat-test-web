@@ -1,4 +1,6 @@
 /*---------- Types ----------*/
+import { IUser } from "@/@types/user";
+
 export type LoginReturnResult = "SUCCESS" | "ERROR";
 
 export type SignUpReturnResult = "SUCCESS" | "CONFIRM_EMAIL" | "ERROR";
@@ -8,12 +10,6 @@ export type ConfirmCodeResult = "SUCCESS" | "ERROR";
 /*---------- Interfaces ----------*/
 export interface IUserSignupAttributes {
   name: string;
-}
-
-export interface IUser {
-  sub: string;
-  name: string;
-  email: string;
 }
 
 export interface IAuthResultPayload {

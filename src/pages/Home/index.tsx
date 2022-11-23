@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "@/contexts/Auth";
 
 /*---------- Components ----------*/
+import ChatsList from "@/components/ChatsList";
 import ProfileHeader from "@/components/ProfileHeader";
 
 /*---------- Styles ----------*/
@@ -29,7 +30,10 @@ const Home: React.FC = () => {
 
   return (
     <Container>
-      <ChatsPanel>{user ? <ProfileHeader userInfo={user} /> : null}</ChatsPanel>
+      <ChatsPanel>
+        <ProfileHeader userInfo={user!} />
+        <ChatsList />
+      </ChatsPanel>
     </Container>
   );
 };

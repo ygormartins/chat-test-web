@@ -1,8 +1,8 @@
 /*---------- External ----------*/
-import { IUser } from "@/@types/auth";
+import { IUser } from "@/@types/user";
 
 export interface ProfilePictureProps {
-  userInfo: IUser;
+  userInfo?: IUser;
   size?: number;
   round?: boolean;
   onClick?: (userInfo: IUser) => void;

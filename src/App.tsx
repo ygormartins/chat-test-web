@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 /*---------- Contexts ----------*/
 import { AuthProvider } from "@/contexts/Auth";
+import { ChatsProvider } from "@/contexts/Chats";
 
 /*---------- Components ----------*/
 import GradientBackground from "@/components/GradientContainer";
@@ -16,15 +17,17 @@ import SignUp from "@/pages/SignUp";
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <Router>
-        <GradientBackground>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<SignUp />} />
-          </Routes>
-        </GradientBackground>
-      </Router>
+      <ChatsProvider>
+        <Router>
+          <GradientBackground>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<SignUp />} />
+            </Routes>
+          </GradientBackground>
+        </Router>
+      </ChatsProvider>
     </AuthProvider>
   );
 };

@@ -1,6 +1,7 @@
 /*---------- External ----------*/
 import Axios from "axios";
 import jwtDecode from "jwt-decode";
+import { isJwtExpired } from "jwt-check-expiration";
 
 /*---------- Utils ----------*/
 import { getCognitoError } from "@/utils/getCognitoError";
@@ -17,10 +18,9 @@ import {
   IRefreshToken,
   ISignUp,
   ISignUpAuthResult,
-  IUser,
   IUserSignupAttributes,
 } from "@/@types/auth";
-import { isJwtExpired } from "jwt-check-expiration";
+import { IUser } from "@/@types/user";
 
 export const CognitoClient = Axios.create({
   baseURL: import.meta.env.VITE_COGNITO_IDP_ENDPOINT,

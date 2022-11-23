@@ -22,8 +22,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userInfo }) => {
     <Container>
       <ProfilePicture size={38} userInfo={userInfo} />
       <InfoSection>
-        <NameLabel>{userInfo.name}</NameLabel>
-        <EmailLabel>{userInfo.email}</EmailLabel>
+        <NameLabel>{userInfo?.name}</NameLabel>
+        <EmailLabel>{userInfo?.email}</EmailLabel>
       </InfoSection>
       <OptionsSection>
         <IconButton

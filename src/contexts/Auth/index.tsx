@@ -10,10 +10,10 @@ import * as StorageService from "@/services/StorageService";
 import {
   ILoginAuthResult,
   ISignUpAuthResult,
-  IUser,
   IUserSignupAttributes,
 } from "@/@types/auth";
-import { AuthProviderProps, AUTH_STATUS, IAuthContext } from "./@types";
+import { IUser } from "@/@types/user";
+import { AuthProviderProps, AUTH_STATUS, IAuthContext } from "./types";
 
 export const AuthContext = React.createContext<IAuthContext>({
   status: "LOADING",
