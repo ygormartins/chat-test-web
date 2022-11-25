@@ -23,7 +23,7 @@ export const ButtonContainer = styled.button<{
     opacity: 0.75;
   }
 
-  &:focus {
+  &:focus-visible {
     outline: 0.125rem solid black;
   }
 `;

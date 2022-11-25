@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 
 /*---------- Types ----------*/
 import { IUser } from "@/@types/user";
-import { IChatAssociation, IGroupInfo } from "@/@types/chat";
+import { IChat, IGroupInfo } from "@/@types/chat";
 
 export type GroupUsers = { [key: string]: Omit<IUser, "sub"> };
 
@@ -16,12 +16,12 @@ export interface IChatsContext {
   loadingGroupInfo: boolean;
   loadingGroupUsers: boolean;
   loadingChatUserInfo: boolean;
-  chats?: IChatAssociation[];
-  selectedChat?: IChatAssociation;
+  chats?: IChat[];
+  selectedChat?: IChat;
   currentGroupInfo?: IGroupInfo;
   currentGroupUsers?: GroupUsers;
   currentChatUserInfo?: IUser;
 
   loadChats?: () => Promise<void>;
-  setSelectedChat?: (chat?: IChatAssociation) => void;
+  setSelectedChat?: (chat?: IChat) => void;
 }

@@ -7,7 +7,7 @@ import { AuthContext } from "@/contexts/Auth";
 /*---------- Services ----------*/
 
 /*---------- Types ----------*/
-import { IChatAssociation, IGroupInfo } from "@/@types/chat";
+import { IChat, IGroupInfo } from "@/@types/chat";
 import { ChatsProviderProps, GroupUsers, IChatsContext } from "./types";
 import { IUser } from "@/@types/user";
 
@@ -29,8 +29,8 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
   const [loadingChatUserInfo, setIsloadingChatUserInfo] =
     useState<boolean>(false);
 
-  const [chats, setChats] = useState<IChatAssociation[]>();
-  const [selectedChat, setSelectedChat] = useState<IChatAssociation>();
+  const [chats, setChats] = useState<IChat[]>();
+  const [selectedChat, setSelectedChat] = useState<IChat>();
   const [currentGroupInfo, setCurrentGroupInfo] = useState<IGroupInfo>();
   const [currentGroupUsers, setCurrentGroupUsers] = useState<GroupUsers>();
   const [currentChatUserInfo, setCurrentChatUserInfo] = useState<IUser>();
@@ -49,17 +49,38 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
           preview: "This was the last message",
           timestamp: "2022-11-23T19:54:14Z",
           type: "text",
-          userName: "My Friend",
+          userName: "José Games",
           userSub: "0",
         },
         partitionKey: `user#${user.sub}`,
         sortKey: "chat@user#0",
-        title: "My Friend",
+        title: "José Games",
         type: "private",
         gsi2PK: `user#${user.sub}`,
         gsi2SK: "chat-timestamp#2022-11-23T19:54:14Z",
-        gsi1PK: "group#uuid",
-        gsi1SK: `user#${user.sub}`,
+        unreadMessages: 1,
+        // gsi1PK: "group#uuid",
+        // gsi1SK: `user#${user.sub}`,
+        user,
+      },
+      {
+        entityType: "chat-association",
+        lastMessage: {
+          preview: "I've been putting up with your shit for way too long",
+          timestamp: "2022-11-21T12:39:14Z",
+          type: "text",
+          userName: user.name,
+          userSub: user.sub,
+        },
+        partitionKey: `user#${user.sub}`,
+        sortKey: "chat@user#1",
+        title: "Ex",
+        type: "private",
+        gsi2PK: `user#${user.sub}`,
+        unreadMessages: 0,
+        gsi2SK: "chat-timestamp#2022-11-21T12:39:14Z",
+        // gsi1PK: "group#uuid",
+        // gsi1SK: `user#${user.sub}`,
         user,
       },
     ]);
@@ -93,7 +114,7 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     const users: GroupUsers = {
       "0": {
         email: "user@email.com",
-        name: "My Friend",
+        name: "José Games",
       },
     };
 
@@ -112,7 +133,7 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     const userInfo: IUser = {
       sub: "0",
       email: "user@email.com",
-      name: "My Friend",
+      name: "José Games",
     };
 
     setCurrentChatUserInfo(userInfo);

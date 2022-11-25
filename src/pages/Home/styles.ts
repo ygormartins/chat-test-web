@@ -24,7 +24,7 @@ export const ChatsPanel = styled(Resizable).attrs({
   minWidth: "25%",
   maxWidth: "60%",
   enable: { right: true },
-  defaultSize: { width: "35%", height: "100%" },
+  defaultSize: { width: "30%", height: "100%" },
 })`
   background-color: white;
   box-shadow: 0 0 0.25rem 0.125rem #00000016;

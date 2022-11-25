@@ -23,10 +23,11 @@ export interface IChatLastMessage {
   type: MessageType;
 }
 
-export interface IChatAssociation extends IDatabaseItem {
+export interface IChat extends IDatabaseItem {
   type: ChatType;
   title: string;
   user: IUser;
+  unreadMessages: number;
   lastMessage?: IChatLastMessage;
 }
 

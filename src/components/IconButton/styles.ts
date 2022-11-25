@@ -27,7 +27,8 @@ export const ButtonContainer = styled.button<{
     transition: opacity 200ms;
   }
 
-  &:hover {
+  &:hover,
+  &:focus-visible {
     &::before {
       opacity: 0.1;
     }

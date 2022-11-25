@@ -14,7 +14,8 @@ export const InfoSection = styled.div`
   display: flex;
   flex-grow: 1;
   flex-direction: column;
-  gap: 0.25rem;
+  height: 100%;
+  justify-content: space-between;
   overflow: hidden;
 `;
 
