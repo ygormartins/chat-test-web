@@ -11,7 +11,6 @@ export const Container = styled.div`
   display: flex;
   flex-direction: row;
   overflow: hidden;
-  gap: 2.5rem;
   background-color: #eff5f5;
 
   @media screen and (max-width: 800px) {
@@ -31,4 +30,9 @@ export const ChatsPanel = styled(Resizable).attrs({
   overflow: hidden;
   display: flex;
   flex-direction: column;
+`;
+
+export const ConversationPanel = styled.main`
+  display: flex;
+  flex: 1;
 `;

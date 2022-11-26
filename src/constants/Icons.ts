@@ -3,6 +3,7 @@ import React from "react";
 
 /*---------- Assets ----------*/
 import { ReactComponent as add } from "@/assets/icons/add.svg";
+import { ReactComponent as close } from "@/assets/icons/close.svg";
 import { ReactComponent as settings } from "@/assets/icons/settings.svg";
 
 /*
@@ -10,10 +11,10 @@ import { ReactComponent as settings } from "@/assets/icons/settings.svg";
  * and remove hardcoded fill value
  */
 
-export type IconsEnum = "add" | "settings";
+export type IconsEnum = "add" | "close" | "settings";
 
 const IconsExport: {
   [key in IconsEnum]: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
-} = { add, settings };
+} = { add, close, settings };
 
 export default IconsExport;

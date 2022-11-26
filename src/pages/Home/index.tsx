@@ -12,9 +12,10 @@ import { ChatsContext } from "@/contexts/Chats";
 /*---------- Components ----------*/
 import ChatsList from "@/components/ChatsList";
 import ProfileHeader from "@/components/ProfileHeader";
+import ConversationScreen from "@/components/ConversationScreen";
 
 /*---------- Styles ----------*/
-import { ChatsPanel, Container } from "./styles";
+import { ChatsPanel, Container, ConversationPanel } from "./styles";
 
 const Home: React.FC = () => {
   /*---------- Hooks ----------*/
@@ -22,18 +23,18 @@ const Home: React.FC = () => {
 
   /*---------- Contexts ----------*/
   const { status, user } = useContext(AuthContext);
-  const { chats, setSelectedChat } = useContext(ChatsContext);
+  const { chats, selectedChat, setSelectedChat, markMessagesAsRead } =
+    useContext(ChatsContext);
 
   /*---------- Handlers ----------*/
   const openChat = useCallback(
     (chat: IChat) => {
-      if (!setSelectedChat) return;
-
       // TODO: make API call to mark messages as read
 
-      setSelectedChat(chat);
+      setSelectedChat?.(chat);
+      markMessagesAsRead?.(chat);
     },
-    [setSelectedChat]
+    [setSelectedChat, markMessagesAsRead]
   );
 
   /*---------- Effects ----------*/
@@ -51,6 +52,14 @@ const Home: React.FC = () => {
         <ProfileHeader userInfo={user!} />
         <ChatsList onChatItemClick={openChat} chatsList={chats || []} />
       </ChatsPanel>
+      <ConversationPanel>
+        {selectedChat ? (
+          <ConversationScreen
+            setSelectedChat={setSelectedChat}
+            chatInfo={selectedChat!}
+          />
+        ) : null}
+      </ConversationPanel>
     </Container>
   );
 };

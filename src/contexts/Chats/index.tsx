@@ -74,7 +74,7 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
         },
         partitionKey: `user#${user.sub}`,
         sortKey: "chat@user#1",
-        title: "Ex",
+        title: "Kanye West",
         type: "private",
         gsi2PK: `user#${user.sub}`,
         unreadMessages: 0,
@@ -140,13 +140,43 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     setIsloadingChatUserInfo(false);
   };
 
+  const markMessagesAsRead = (chat: IChat) => {
+    setChats((previousChatsList) => {
+      const chatsList = [...(previousChatsList || [])];
+
+      const currentChatIndex = chatsList?.findIndex(
+        (chatItem) => chatItem.sortKey === chat.sortKey
+      );
+
+      if (currentChatIndex !== -1) {
+        chatsList[currentChatIndex] = {
+          ...chatsList[currentChatIndex],
+          unreadMessages: 0,
+        };
+      }
+
+      return chatsList;
+    });
+
+    // TODO: make API call to mark messages as read
+  };
+
   /*---------- Effects ----------*/
   useEffect(() => {
     loadChats();
   }, [user, status, loadChats]);
 
   useEffect(() => {
-    if (!selectedChat) return;
+    if (!selectedChat) {
+      setCurrentChatUserInfo(undefined);
+      setCurrentGroupInfo(undefined);
+      setCurrentGroupUsers(undefined);
+      setIsLoadingGroupInfo(false);
+      setIsLoadingGroupUsers(false);
+      setIsloadingChatUserInfo(false);
+
+      return;
+    }
 
     if (selectedChat.type === "group") {
       getGroupChatDetails();
@@ -169,6 +199,7 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
         currentChatUserInfo,
         loadChats,
         setSelectedChat,
+        markMessagesAsRead,
       }}
     >
       {children}
