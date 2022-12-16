@@ -8,6 +8,7 @@ import { ReactComponent as smile } from "@/assets/icons/smile.svg";
 import { ReactComponent as camera } from "@/assets/icons/camera.svg";
 import { ReactComponent as settings } from "@/assets/icons/settings.svg";
 import { ReactComponent as paperPlane } from "@/assets/icons/paper-plane.svg";
+import { ReactComponent as personSilhouette } from "@/assets/icons/person-silhouette.svg";
 
 /*
  * optimize icons using https://www.svgminify.com/
@@ -20,10 +21,19 @@ export type IconsEnum =
   | "smile"
   | "camera"
   | "settings"
-  | "paper-plane";
+  | "paper-plane"
+  | "person-silhouette";
 
 const IconsExport: {
   [key in IconsEnum]: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
-} = { add, close, smile, camera, settings, "paper-plane": paperPlane };
+} = {
+  add,
+  close,
+  smile,
+  camera,
+  settings,
+  "paper-plane": paperPlane,
+  "person-silhouette": personSilhouette,
+};
 
 export default IconsExport;

@@ -9,11 +9,19 @@ export const Container = styled.div<{
   height: ${({ size }) => size}px;
   width: ${({ size }) => size}px;
   border-radius: ${({ round }) => (round ? "50%" : "0")};
+  overflow: hidden;
   outline: none;
   border: none;
   flex-shrink: 0;
+  background-color: #eaeaea;
   cursor: ${({ clickable }) => (clickable ? "pointer" : "initial")};
+`;
 
-  // TODO: Add profile picture feature
-  background-color: #37b5a4;
+export const Image = styled.img`
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+
+  [aria-busy="true"] {
+  }
 `;
