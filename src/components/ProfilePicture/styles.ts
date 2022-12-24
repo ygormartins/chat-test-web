@@ -1,6 +1,9 @@
 /*---------- External ----------*/
 import styled from "styled-components";
 
+/*---------- External ----------*/
+import Shimmer from "@/components/Shimmer";
+
 export const Container = styled.div<{
   size: number;
   round: boolean;
@@ -9,6 +12,7 @@ export const Container = styled.div<{
   height: ${({ size }) => size}px;
   width: ${({ size }) => size}px;
   border-radius: ${({ round }) => (round ? "50%" : "0")};
+  position: relative;
   overflow: hidden;
   outline: none;
   border: none;
@@ -21,7 +25,11 @@ export const Image = styled.img`
   height: 100%;
   width: 100%;
   object-fit: cover;
+`;
 
-  [aria-busy="true"] {
-  }
+export const LoadingPlaceholder = styled(Shimmer).attrs({
+  circle: true,
+})`
+  inset: 0;
+  position: absolute;
 `;

@@ -5,7 +5,7 @@ import React, { useMemo, useState } from "react";
 import Icon from "@/components/Icon";
 
 /*---------- Styles ----------*/
-import { Container, Image } from "./styles";
+import { Container, Image, LoadingPlaceholder } from "./styles";
 
 /*---------- Types ----------*/
 import { ProfilePictureProps } from "./types";
@@ -16,15 +16,47 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
   size = 32,
   round = true,
 }) => {
-  /*---------- Styles ----------*/
+  /*---------- States ----------*/
   const [loadingImage, setIsLoadingImage] = useState<boolean>(true);
-  const [error, setIsError] = useState<boolean>(false);
+  const [errorLoading, setErrorLoading] = useState<boolean>(false);
 
+  /*---------- Memos ----------*/
   const imageUrl = useMemo(() => {
     setIsLoadingImage(true);
 
     return `https://chat-app-public-media.s3.amazonaws.com/user/${userInfo?.sub}.png`;
   }, [userInfo?.sub]);
+
+  /*---------- Handlers ----------*/
+  const handleFetchFailed = () => {
+    setErrorLoading(true);
+    setIsLoadingImage(false);
+  };
+
+  const handleFetchSucceeded = () => {
+    setErrorLoading(false);
+    setIsLoadingImage(false);
+  };
+
+  /*---------- Renders ----------*/
+  const renderLoadingIndicator = () => {
+    return <LoadingPlaceholder />;
+  };
+
+  const renderProfilePicture = () => {
+    if (errorLoading)
+      return <Icon icon="person-silhouette" color="#8f8f8f" size={size} />;
+
+    return (
+      <Image
+        src={imageUrl}
+        alt={userInfo?.name}
+        onLoad={handleFetchSucceeded}
+        onError={handleFetchFailed}
+        aria-busy={loadingImage}
+      />
+    );
+  };
 
   return (
     <Container
@@ -33,16 +65,8 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
       round={round}
       size={size}
     >
-      {!error ? (
-        <Image
-          src={imageUrl}
-          alt={userInfo?.name}
-          onLoad={() => setIsError(false)}
-          onError={() => setIsError(true)}
-        />
-      ) : (
-        <Icon icon="person-silhouette" color="#8f8f8f" size={size} />
-      )}
+      {renderProfilePicture()}
+      {loadingImage ? renderLoadingIndicator() : null}
     </Container>
   );
 };
