@@ -8,7 +8,7 @@ import { Container } from "./styles";
 import { ShimmerProps } from "./types";
 
 const Shimmer: React.FC<ShimmerProps> = ({ active = true, className }) => {
-  return <Container className={className} />;
+  return <Container active={active} className={className} />;
 };
 
 export default Shimmer;

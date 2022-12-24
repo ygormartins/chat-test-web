@@ -24,7 +24,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
   const imageUrl = useMemo(() => {
     setIsLoadingImage(true);
 
-    return `https://chat-app-public-media.s3.amazonaws.com/user/${userInfo?.sub}.png`;
+    return `${import.meta.env.VITE_PUBLIC_MEDIA_URL}/user/${userInfo?.sub}.png`;
   }, [userInfo?.sub]);
 
   /*---------- Handlers ----------*/

@@ -1,12 +1,14 @@
 /*---------- External ----------*/
 import React, { useContext, useMemo } from "react";
-import { format } from "pretty-date";
 
 /*---------- Contexts ----------*/
 import { AuthContext } from "@/contexts/Auth";
 
 /*---------- Components ----------*/
 import ProfilePicture from "@/components/ProfilePicture";
+
+/*---------- Utils ----------*/
+import { generateHumanReadableDate } from "@/utils/date/generateHumanReadableDate";
 
 /*---------- Styles ----------*/
 import {
@@ -56,7 +58,7 @@ const ChatItem: React.FC<ChatsItemProps> = ({
 
     const date = new Date(chatInfo.lastMessage.timestamp);
 
-    return format(date);
+    return generateHumanReadableDate(date);
   }, [chatInfo.lastMessage?.timestamp]);
 
   const messageCount = useMemo(() => {
