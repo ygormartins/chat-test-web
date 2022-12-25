@@ -5,7 +5,7 @@ import React, { useContext, useMemo } from "react";
 import { AuthContext } from "@/contexts/Auth";
 
 /*---------- Components ----------*/
-import ProfilePicture from "@/components/ProfilePicture";
+import ProfilePicture from "@/components/images/ProfilePicture";
 
 /*---------- Utils ----------*/
 import { generateHumanReadableDate } from "@/utils/date/generateHumanReadableDate";

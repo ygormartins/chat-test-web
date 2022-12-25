@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 
 /*---------- Components ----------*/
-import Icon from "@/components/Icon";
-import IconButton from "@/components/IconButton";
+import Icon from "@/components/images/Icon";
+import IconButton from "@/components/buttons/IconButton";
 
 /*---------- Styles ----------*/
 import {

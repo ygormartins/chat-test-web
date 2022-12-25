@@ -10,9 +10,9 @@ import { AuthContext } from "@/contexts/Auth";
 import { ChatsContext } from "@/contexts/Chats";
 
 /*---------- Components ----------*/
-import ChatsList from "@/components/ChatsList";
-import ProfileHeader from "@/components/ProfileHeader";
-import ConversationScreen from "@/components/ConversationScreen";
+import ChatsList from "@/components/lists/ChatsList";
+import ProfileHeader from "@/components/layouts/ProfileHeader";
+import ConversationScreen from "@/components/layouts/ConversationScreen";
 
 /*---------- Styles ----------*/
 import { ChatsPanel, Container, ConversationPanel } from "./styles";

@@ -7,8 +7,8 @@ import swal from "sweetalert2";
 import { AuthContext } from "@/contexts/Auth";
 
 /*---------- Components ----------*/
-import Button from "@/components/Button";
-import TextInput from "@/components/TextInput";
+import Button from "@/components/buttons/Button";
+import TextInput from "@/components/inputs/TextInput";
 
 /*---------- Styles ----------*/
 import { FieldsArea, FormContainer, SignInLink } from "./styles";

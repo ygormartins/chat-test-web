@@ -2,15 +2,15 @@
 import React, { useState } from "react";
 
 /*---------- Components ----------*/
-import MessagesList from "@/components/MessagesList";
-import ConversationHeader from "@/components/ConversationHeader";
+import MessagesList from "@/components/lists/MessagesList";
+import ConversationHeader from "@/components/layouts/ConversationHeader";
 
 /*---------- Styles ----------*/
 import { ConversationContainer } from "./styles";
 
 /*---------- Types ----------*/
 import { ConversationScreenProps } from "./types";
-import ChatInputBar from "../ChatInputBar";
+import ChatInputBar from "../../inputs/ChatInputBar";
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({
   chatInfo,

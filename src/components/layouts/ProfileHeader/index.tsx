@@ -2,8 +2,8 @@
 import React from "react";
 
 /*---------- Components ----------*/
-import ProfilePicture from "@/components/ProfilePicture";
-import IconButton from "@/components/IconButton";
+import ProfilePicture from "@/components/images/ProfilePicture";
+import IconButton from "@/components/buttons/IconButton";
 
 /*---------- Styles ----------*/
 import {

@@ -2,7 +2,7 @@
 import React, { useMemo } from "react";
 
 /*---------- External ----------*/
-import Icon from "@/components/Icon";
+import Icon from "@/components/images/Icon";
 
 /*---------- Styles ----------*/
 import { ButtonContainer } from "./styles";

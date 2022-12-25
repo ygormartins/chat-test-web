@@ -2,8 +2,8 @@
 import React, { useMemo } from "react";
 
 /*---------- Components ----------*/
-import IconButton from "@/components/IconButton";
-import ProfilePicture from "@/components/ProfilePicture";
+import IconButton from "@/components/buttons/IconButton";
+import ProfilePicture from "@/components/images/ProfilePicture";
 
 /*---------- Styles ----------*/
 import {

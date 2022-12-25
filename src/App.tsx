@@ -7,7 +7,7 @@ import { AuthProvider } from "@/contexts/Auth";
 import { ChatsProvider } from "@/contexts/Chats";
 
 /*---------- Components ----------*/
-import GradientBackground from "@/components/GradientContainer";
+import GradientBackground from "@/components/layouts/GradientContainer";
 
 /*---------- Pages ----------*/
 import Home from "@/pages/Home";

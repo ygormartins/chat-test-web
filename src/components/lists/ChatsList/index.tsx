@@ -2,7 +2,7 @@
 import React from "react";
 
 /*---------- Components ----------*/
-import ChatItem from "@/components/ChatItem";
+import ChatItem from "@/components/layouts/ChatItem";
 
 /*---------- Styles ----------*/
 import { ListContainer } from "./styles";

@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from "react";
 
 /*---------- Components ----------*/
-import Icon from "@/components/Icon";
+import Icon from "@/components/images/Icon";
 
 /*---------- Styles ----------*/
 import { Container, Image, LoadingPlaceholder } from "./styles";

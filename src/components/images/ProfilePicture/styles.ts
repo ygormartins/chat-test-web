@@ -2,7 +2,7 @@
 import styled from "styled-components";
 
 /*---------- External ----------*/
-import Shimmer from "@/components/Shimmer";
+import Shimmer from "@/components/miscellaneous/Shimmer";
 
 export const Container = styled.div<{
   size: number;
