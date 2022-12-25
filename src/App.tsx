@@ -13,20 +13,23 @@ import GradientBackground from "@/components/layouts/GradientContainer";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import SignUp from "@/pages/SignUp";
+import { ModalProvider } from "./contexts/Modal";
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
       <ChatsProvider>
-        <Router>
-          <GradientBackground>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<SignUp />} />
-            </Routes>
-          </GradientBackground>
-        </Router>
+        <ModalProvider>
+          <Router>
+            <GradientBackground>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<SignUp />} />
+              </Routes>
+            </GradientBackground>
+          </Router>
+        </ModalProvider>
       </ChatsProvider>
     </AuthProvider>
   );
