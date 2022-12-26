@@ -2,10 +2,13 @@
 import ModalContainer from "@/components/layouts/ModalContainer";
 import React, { ReactNode, useState } from "react";
 
-/*---------- Services ----------*/
-
 /*---------- Types ----------*/
-import { ModalProviderProps, IModalContext } from "./types";
+import { ModalProviderProps, IModalContext, IModalSettings } from "./types";
+
+/*---------- Constants ----------*/
+const DEFAULT_MODAL_SETTINGS: IModalSettings = {
+  dismissOnOutsideClick: true,
+};
 
 export const ModalContext = React.createContext<IModalContext>({
   isVisible: false,
@@ -17,6 +20,8 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 
   /*---------- Private States ----------*/
   const [modalContent, setModalContent] = useState<ReactNode>(null);
+  const [dismissOnOutsideClick, setDismissOnOutsideClick] =
+    useState<boolean>(true);
 
   /*---------- Handlers ----------*/
   const show = () => {
@@ -27,8 +32,17 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     setIsVisible(false);
   };
 
-  const setContent = (content: ReactNode) => {
+  const setContent = (
+    content: ReactNode,
+    settings: IModalSettings = DEFAULT_MODAL_SETTINGS
+  ) => {
+    setDismissOnOutsideClick(settings.dismissOnOutsideClick || false);
+
     setModalContent(content);
+  };
+
+  const handleOnOutsideClick = () => {
+    if (dismissOnOutsideClick) dismiss();
   };
 
   return (
@@ -42,7 +56,10 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     >
       {children}
       {isVisible ? (
-        <ModalContainer modalContent={modalContent} onOutsideClick={dismiss} />
+        <ModalContainer
+          modalContent={modalContent}
+          onOutsideClick={handleOnOutsideClick}
+        />
       ) : null}
     </ModalContext.Provider>
   );

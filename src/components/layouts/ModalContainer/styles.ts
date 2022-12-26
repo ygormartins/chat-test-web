@@ -23,11 +23,6 @@ export const ModalBackground = styled.div`
   align-items: center;
   animation: ${blurAnimation} 300ms ease-in-out;
 
-  & > * {
-    max-width: 1000px;
-    max-height: 800px;
-  }
-
   @media screen and (max-width: 800px) {
     padding: 0 1rem;
   }

@@ -3,5 +3,7 @@ export interface TextInputProps {
   label?: string;
   placeholder?: string;
   value?: string;
+  loading?: boolean;
   onTextChange?: (value: string) => void;
+  onDebounce?: () => void;
 }

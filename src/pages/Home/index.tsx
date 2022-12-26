@@ -4,15 +4,18 @@ import { useNavigate } from "react-router-dom";
 
 /*---------- Types ----------*/
 import { IChat } from "@/@types/chat";
+import { OptionItem } from "@/components/layouts/ProfileHeader/types";
 
 /*---------- Contexts ----------*/
 import { AuthContext } from "@/contexts/Auth";
+import { ModalContext } from "@/contexts/Modal";
 import { ChatsContext } from "@/contexts/Chats";
 
 /*---------- Components ----------*/
 import ChatsList from "@/components/lists/ChatsList";
 import ProfileHeader from "@/components/layouts/ProfileHeader";
 import ConversationScreen from "@/components/layouts/ConversationScreen";
+import NewConversationModal from "@/components/modals/NewConversationModal";
 
 /*---------- Styles ----------*/
 import { ChatsPanel, Container, ConversationPanel } from "./styles";
@@ -23,19 +26,33 @@ const Home: React.FC = () => {
 
   /*---------- Contexts ----------*/
   const { status, user } = useContext(AuthContext);
+  const { setContent, show } = useContext(ModalContext);
   const { chats, selectedChat, setSelectedChat, markMessagesAsRead } =
     useContext(ChatsContext);
 
   /*---------- Handlers ----------*/
   const openChat = useCallback(
     (chat: IChat) => {
-      // TODO: make API call to mark messages as read
-
       setSelectedChat?.(chat);
       markMessagesAsRead?.(chat);
     },
     [setSelectedChat, markMessagesAsRead]
   );
+
+  const showNewConversationModal = useCallback(() => {
+    setContent?.(<NewConversationModal />);
+    show?.();
+  }, [show, setContent]);
+
+  /*---------- Lists ----------*/
+  const optionsList: OptionItem[] = [
+    {
+      icon: "add",
+      tooltip: "New Conversation",
+      onClick: showNewConversationModal,
+    },
+    { icon: "settings", tooltip: "Settings" },
+  ];
 
   /*---------- Effects ----------*/
   useEffect(() => {
@@ -49,7 +66,7 @@ const Home: React.FC = () => {
   return (
     <Container>
       <ChatsPanel>
-        <ProfileHeader userInfo={user!} />
+        <ProfileHeader options={optionsList} userInfo={user!} />
         <ChatsList onChatItemClick={openChat} chatsList={chats || []} />
       </ChatsPanel>
       <ConversationPanel>

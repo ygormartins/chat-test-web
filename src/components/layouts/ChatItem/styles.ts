@@ -9,7 +9,8 @@ export const ItemContainer = styled.button`
   gap: 0.75rem;
   border: none;
   outline: none;
-  background-color: transparent;
+  align-items: stretch;
+  background: transparent;
 
   &::before {
     content: "";
@@ -30,8 +31,7 @@ export const ItemContainer = styled.button`
 
 export const InfoSection = styled.div`
   display: flex;
-  flex-grow: 1;
-  height: 100%;
+  flex: 1;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;

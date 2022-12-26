@@ -1,5 +1,5 @@
 /*---------- External ----------*/
-import React from "react";
+import React, { useMemo } from "react";
 import { ThreeDots } from "react-loader-spinner";
 
 /*---------- Types ----------*/
@@ -13,6 +13,7 @@ const Button: React.FC<ButtonProps> = ({
   children = "",
   loading = false,
   disabled = false,
+  variant = "primary",
 }) => {
   /*---------- Handlers ----------*/
   const handleClick = () => {
@@ -21,16 +22,27 @@ const Button: React.FC<ButtonProps> = ({
     onClick();
   };
 
+  const loadingColor = useMemo(() => {
+    switch (variant) {
+      case "primary":
+      case "danger":
+        return "white";
+      case "secondary":
+        return "teal";
+    }
+  }, [variant]);
+
   return (
     <ButtonContainer
       disabled={disabled}
       loadingState={loading}
       onClick={handleClick}
+      variant={variant}
     >
       {children}
       {loading ? (
         <LoadingContainer>
-          <ThreeDots color="white" height={32} width={32} />
+          <ThreeDots color={loadingColor} height={32} width={32} />
         </LoadingContainer>
       ) : null}
     </ButtonContainer>

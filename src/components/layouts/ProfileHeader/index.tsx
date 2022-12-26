@@ -15,9 +15,24 @@ import {
 } from "./styles";
 
 /*---------- Types ----------*/
-import { ProfileHeaderProps } from "./types";
+import { OptionItem, ProfileHeaderProps } from "./types";
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userInfo }) => {
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({
+  userInfo,
+  options = [],
+}) => {
+  /*---------- Renders ----------*/
+  const renderOptionItem = (item: OptionItem, index: number) => (
+    <IconButton
+      tooltip={item.tooltip}
+      icon={item.icon}
+      onClick={item.onClick}
+      fgColor="#0e454c"
+      size={30}
+      key={`option-${index}`}
+    />
+  );
+
   return (
     <Container>
       <ProfilePicture size={38} userInfo={userInfo} />
@@ -25,20 +40,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ userInfo }) => {
         <NameLabel>{userInfo?.name}</NameLabel>
         <EmailLabel>{userInfo?.email}</EmailLabel>
       </InfoSection>
-      <OptionsSection>
-        <IconButton
-          tooltip="New Conversation"
-          icon="add"
-          fgColor="#0e454c"
-          size={30}
-        />
-        <IconButton
-          tooltip="Settings"
-          icon="settings"
-          fgColor="#0e454c"
-          size={30}
-        />
-      </OptionsSection>
+      <OptionsSection>{options.map(renderOptionItem)}</OptionsSection>
     </Container>
   );
 };

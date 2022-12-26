@@ -15,15 +15,13 @@ export const InputLabel = styled.label`
   color: teal;
 `;
 
-export const InputField = styled.input`
+export const InputFieldContainer = styled.div`
   border-radius: 1000px;
-  background: none;
-  border: none;
-  outline: none;
-  padding: 0.75rem 1rem;
-  color: black;
-  font-size: 1rem;
+  position: relative;
+  padding: 0 1rem;
+  display: flex;
   box-shadow: 0 0 0.25rem 0.125rem #00000016;
+  justify-content: space-between;
 
   &:hover {
     box-shadow: 0 0 0.75rem 0.125rem #00000016;
@@ -31,8 +29,27 @@ export const InputField = styled.input`
 
   &:focus-visible {
   }
+`;
+
+export const InputField = styled.input`
+  padding: 0.75rem 0;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  flex: 1;
+  color: black;
 
   &::placeholder {
     color: #9f9f9f;
   }
+`;
+
+export const InputRightItemContainer = styled.div`
+  align-self: stretch;
+  display: flex;
+  margin-left: 0.75rem;
+  justify-content: center;
+  align-items: center;
+  background: yellow;
 `;

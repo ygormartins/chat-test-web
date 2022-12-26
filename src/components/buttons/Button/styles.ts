@@ -1,15 +1,30 @@
 /*---------- External ----------*/
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import { ButtonVariant } from "./types";
+
+const PrimaryStyle = css<{ loadingState: boolean }>`
+  background-color: teal;
+  color: ${({ loadingState }) => (loadingState ? "transparent" : "white")};
+`;
+
+const SecondaryStyle = css<{ loadingState: boolean }>`
+  background-color: transparent;
+  color: ${({ loadingState }) => (loadingState ? "transparent" : "teal")};
+`;
+
+const DangerStyle = css<{ loadingState: boolean }>`
+  background-color: #ff2044;
+  color: ${({ loadingState }) => (loadingState ? "transparent" : "white")};
+`;
 
 export const ButtonContainer = styled.button<{
   loadingState: boolean;
   disabled: boolean;
+  variant: ButtonVariant;
 }>`
   border: none;
   outline: none;
-  background-color: teal;
   opacity: ${({ disabled }) => (disabled ? "0.5" : "1.0")};
-  color: ${({ loadingState }) => (loadingState ? "transparent" : "white")};
   font-size: 1rem;
   font-weight: bold;
   padding: 0.5rem 1rem;
@@ -26,6 +41,17 @@ export const ButtonContainer = styled.button<{
   &:focus-visible {
     outline: 0.125rem solid black;
   }
+
+  ${({ variant }) => {
+    switch (variant) {
+      case "primary":
+        return PrimaryStyle;
+      case "secondary":
+        return SecondaryStyle;
+      case "danger":
+        return DangerStyle;
+    }
+  }}
 `;
 
 export const LoadingContainer = styled.div`
