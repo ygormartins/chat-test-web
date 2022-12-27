@@ -4,6 +4,7 @@ export interface TextInputProps {
   placeholder?: string;
   value?: string;
   loading?: boolean;
+  debounceInterval?: number;
   onTextChange?: (value: string) => void;
   onDebounce?: () => void;
 }

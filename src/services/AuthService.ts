@@ -1,11 +1,13 @@
 /*---------- External ----------*/
-import Axios from "axios";
 import jwtDecode from "jwt-decode";
 import { isJwtExpired } from "jwt-check-expiration";
 
 /*---------- Utils ----------*/
 import { getCognitoError } from "@/utils/getCognitoError";
 import { generateSecretHash } from "@/utils/generateSecretHash";
+
+/*---------- Clients ----------*/
+import { AuthClient } from "@/clients/AuthClient";
 
 /*---------- Services ----------*/
 import * as StorageService from "@/services/StorageService";
@@ -22,20 +24,12 @@ import {
 } from "@/@types/auth";
 import { IUser } from "@/@types/user";
 
-export const CognitoClient = Axios.create({
-  baseURL: import.meta.env.VITE_COGNITO_IDP_ENDPOINT,
-  headers: {
-    "Content-Type": "application/x-amz-json-1.1",
-  },
-});
-
 export const signIn = async (
   email: string,
   password: string
 ): Promise<ILoginAuthResult> => {
-  console.log(import.meta.env);
   try {
-    const { data: authResult } = await CognitoClient.post<IInitiateAuth>(
+    const { data: authResult } = await AuthClient.post<IInitiateAuth>(
       "/",
       {
         AuthFlow: "USER_PASSWORD_AUTH",
@@ -92,7 +86,7 @@ export const refreshSession = async (
   refreshToken: string
 ): Promise<string | undefined> => {
   try {
-    const { data: authResult } = await CognitoClient.post<IRefreshToken>(
+    const { data: authResult } = await AuthClient.post<IRefreshToken>(
       "/",
       {
         AuthFlow: "REFRESH_TOKEN_AUTH",
@@ -161,7 +155,7 @@ export const signUp = async (
   );
 
   try {
-    const { data: authResult } = await CognitoClient.post<ISignUp>(
+    const { data: authResult } = await AuthClient.post<ISignUp>(
       "/",
       {
         Username: email,
@@ -205,7 +199,7 @@ export const confirmEmail = async (
   email: string
 ): Promise<IConfirmCodeAuthResult> => {
   try {
-    await CognitoClient.post(
+    await AuthClient.post(
       "/",
       {
         ConfirmationCode: code,
@@ -237,7 +231,7 @@ export const logout = async (): Promise<void> => {
 
   if (accessToken?.length) {
     try {
-      await CognitoClient.post(
+      await AuthClient.post(
         "",
         {
           AccessToken: accessToken,

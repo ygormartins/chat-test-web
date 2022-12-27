@@ -16,9 +16,9 @@ const ModalContainer: React.FC<ModalContainerProps> = ({
   ) => {
     const typedTarget = event.target as HTMLDivElement;
 
-    if (typedTarget.id === backgroundID) {
-      onOutsideClick();
-    }
+    if (typedTarget.id !== backgroundID) return;
+
+    onOutsideClick();
   };
 
   return (

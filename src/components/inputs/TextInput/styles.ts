@@ -51,5 +51,4 @@ export const InputRightItemContainer = styled.div`
   margin-left: 0.75rem;
   justify-content: center;
   align-items: center;
-  background: yellow;
 `;

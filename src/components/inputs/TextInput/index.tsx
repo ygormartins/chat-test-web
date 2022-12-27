@@ -1,5 +1,5 @@
 /*---------- External ----------*/
-import React, { useId, useRef } from "react";
+import React, { useEffect, useId, useRef } from "react";
 
 /*---------- Types ----------*/
 import { TextInputProps } from "./types";
@@ -21,6 +21,7 @@ const TextInput: React.FC<TextInputProps> = ({
   label = "Text Input",
   placeholder = "",
   type = "text",
+  debounceInterval = 1000,
   loading,
 }) => {
   /*---------- Ids ----------*/
@@ -31,18 +32,21 @@ const TextInput: React.FC<TextInputProps> = ({
 
   /*---------- Handlers ----------*/
   const handleOnValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onTextChange(event.target.value);
+  };
+
+  /*---------- Effects ----------*/
+  useEffect(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
-    onTextChange(event.target.value);
-
     const debounceTimeout = setTimeout(() => {
       onDebounce();
-    }, 1000);
+    }, debounceInterval);
 
     timeoutRef.current = debounceTimeout;
-  };
+  }, [debounceInterval, onDebounce, value]);
 
   return (
     <InputContainer>
