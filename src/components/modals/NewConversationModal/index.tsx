@@ -84,6 +84,12 @@ const NewConversationModal: React.FC = () => {
     console.log(userInfo);
   }, [canStartChat, userInfo]);
 
+  const handleOnKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Escape") {
+      dismiss?.();
+    }
+  };
+
   /*---------- Renders ----------*/
   const renderUserCard = () => (
     <UserInfoCard>
@@ -102,13 +108,14 @@ const NewConversationModal: React.FC = () => {
   };
 
   return (
-    <ModalContainer>
+    <ModalContainer onKeyDown={handleOnKeyDown}>
       <ModalTitle>New Conversation</ModalTitle>
       <TextInput
         value={emailInput}
         label="User email"
         loading={loadingUser}
         type="email"
+        autoFocus
         debounceInterval={500}
         placeholder="Enter the user's email address"
         onTextChange={handleOnTextChange}

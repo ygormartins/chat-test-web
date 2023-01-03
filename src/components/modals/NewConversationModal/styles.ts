@@ -12,7 +12,7 @@ const growAnimation = keyframes`
   }
 `;
 
-export const ModalContainer = styled.div`
+export const ModalContainer = styled.div.attrs({ tabIndex: 0 })`
   background-color: white;
   box-shadow: 0 0 0.75rem 0.125rem #00000016;
   border-radius: 0.75rem;
