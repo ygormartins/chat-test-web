@@ -42,7 +42,7 @@ const NewConversationModal: React.FC = () => {
   const { dismiss } = useContext(ModalContext);
 
   /*---------- Memos ----------*/
-  const isStartChatButtonActive = useMemo(
+  const canStartChat = useMemo(
     () => userInfo && userInfo.sub !== user?.sub,
     [userInfo, user?.sub]
   );
@@ -77,6 +77,13 @@ const NewConversationModal: React.FC = () => {
     setIsLoadingUser(false);
   }, [fetchUserInfo]);
 
+  const handleOnEnterPress = useCallback(() => {
+    if (!canStartChat) return;
+
+    // TODO: start convo
+    console.log(userInfo);
+  }, [canStartChat, userInfo]);
+
   /*---------- Renders ----------*/
   const renderUserCard = () => (
     <UserInfoCard>
@@ -101,10 +108,12 @@ const NewConversationModal: React.FC = () => {
         value={emailInput}
         label="User email"
         loading={loadingUser}
+        type="email"
         debounceInterval={500}
         placeholder="Enter the user's email address"
         onTextChange={handleOnTextChange}
         onDebounce={handleOnDebounce}
+        onEnterPress={handleOnEnterPress}
       />
       <PreviewContainer>
         {userInfo ? renderUserCard() : renderUserNotFound()}
@@ -113,7 +122,7 @@ const NewConversationModal: React.FC = () => {
         <Button onClick={dismiss} variant="secondary">
           Cancel
         </Button>
-        <Button disabled={!isStartChatButtonActive}>Start chat</Button>
+        <Button disabled={!canStartChat}>Start chat</Button>
       </ButtonsContainer>
     </ModalContainer>
   );

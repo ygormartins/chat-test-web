@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-export const FormContainer = styled.div`
+export const FormContainer = styled.form`
   width: 40%;
   max-width: 600px;
   padding: 2rem 1rem;

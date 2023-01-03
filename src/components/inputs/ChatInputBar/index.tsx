@@ -21,18 +21,24 @@ import { ChatInputBarProps } from "./types";
 
 const ChatInputBar: React.FC<ChatInputBarProps> = ({
   messageText = "",
-  onSendClick = () => null,
+  onSendMessage = () => null,
   setMessageText = () => null,
 }) => {
   /*---------- Handlers ----------*/
   const [isButtonAnimating, setIsButtonAnimating] = useState<boolean>(false);
 
   /*---------- Handlers ----------*/
-  const handleSendButtonClick = () => {
-    onSendClick();
+  const handleSendMessage = () => {
+    onSendMessage();
 
     setIsButtonAnimating(true);
     setMessageText("");
+  };
+
+  const handleOnKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleSendMessage();
+    }
   };
 
   const handleMessageEdit = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +71,9 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
           <TextInput
             placeholder="Write a message"
             onChange={handleMessageEdit}
+            onKeyDown={handleOnKeyDown}
             value={messageText}
+            autoFocus
           />
         </MessageInputSection>
         <HorizontalSeparator />
@@ -74,7 +82,7 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
           aria-disabled={!messageText?.length}
           disabled={!messageText?.length}
           animating={isButtonAnimating}
-          onClick={handleSendButtonClick}
+          onClick={handleSendMessage}
           onAnimationEnd={stopAnimation}
         >
           <Icon icon="paper-plane" color="#0e454c" size={20} />

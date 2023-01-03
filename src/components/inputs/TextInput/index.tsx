@@ -18,10 +18,12 @@ const TextInput: React.FC<TextInputProps> = ({
   value,
   onTextChange = () => null,
   onDebounce = () => null,
+  onEnterPress = () => null,
   label = "Text Input",
   placeholder = "",
   type = "text",
   debounceInterval = 1000,
+  autoFocus = false,
   loading,
 }) => {
   /*---------- Ids ----------*/
@@ -33,6 +35,12 @@ const TextInput: React.FC<TextInputProps> = ({
   /*---------- Handlers ----------*/
   const handleOnValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onTextChange(event.target.value);
+  };
+
+  const handleOnKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      onEnterPress();
+    }
   };
 
   /*---------- Effects ----------*/
@@ -56,7 +64,9 @@ const TextInput: React.FC<TextInputProps> = ({
           type={type}
           placeholder={placeholder}
           id={id}
+          autoFocus={autoFocus}
           onChange={handleOnValueChange}
+          onKeyDown={handleOnKeyDown}
           value={value}
         />
         {typeof loading !== "undefined" ? (

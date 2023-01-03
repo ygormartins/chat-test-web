@@ -9,4 +9,5 @@ export interface ButtonProps {
   loading?: boolean;
   disabled?: boolean;
   variant?: ButtonVariant;
+  submit?: boolean;
 }

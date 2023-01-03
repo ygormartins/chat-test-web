@@ -42,6 +42,11 @@ const Login: React.FC = () => {
     });
   };
 
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    handleSignIn();
+  };
+
   const handleSignIn = useCallback(async () => {
     if (!signIn) return;
 
@@ -57,13 +62,14 @@ const Login: React.FC = () => {
   }, [signIn, email, password]);
 
   return (
-    <FormContainer>
+    <FormContainer onSubmit={handleFormSubmit}>
       <h1>Login</h1>
       <FieldsArea>
         <TextInput
           type="email"
           label="Email address"
           value={email}
+          autoFocus
           onTextChange={setEmail}
           placeholder="Enter your email address"
         />
@@ -75,7 +81,7 @@ const Login: React.FC = () => {
           placeholder="Enter your password"
         />
       </FieldsArea>
-      <Button loading={isLoadingSignIn} onClick={handleSignIn}>
+      <Button submit loading={isLoadingSignIn}>
         Sign in
       </Button>
       <SignUpLink to="/register">Create an account</SignUpLink>

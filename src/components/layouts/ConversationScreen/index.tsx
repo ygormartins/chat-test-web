@@ -24,8 +24,14 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({
     setSelectedChat(undefined);
   };
 
+  const handleOnKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Escape") {
+      handleCloseChat();
+    }
+  };
+
   return (
-    <ConversationContainer>
+    <ConversationContainer onKeyDown={handleOnKeyDown}>
       <ConversationHeader closeChat={handleCloseChat} chatInfo={chatInfo} />
       <MessagesList />
       <ChatInputBar messageText={messageText} setMessageText={setMessageText} />

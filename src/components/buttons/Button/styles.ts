@@ -35,7 +35,14 @@ export const ButtonContainer = styled.button<{
   box-shadow: 0 0 0.25rem 0.125rem #00000016;
 
   &:hover {
-    opacity: 0.75;
+    ${({ disabled }) =>
+      disabled
+        ? css`
+            cursor: initial;
+          `
+        : css`
+            opacity: 0.75;
+          `}
   }
 
   &:focus-visible {

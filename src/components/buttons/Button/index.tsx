@@ -14,6 +14,7 @@ const Button: React.FC<ButtonProps> = ({
   loading = false,
   disabled = false,
   variant = "primary",
+  submit = false,
 }) => {
   /*---------- Handlers ----------*/
   const handleClick = () => {
@@ -38,6 +39,7 @@ const Button: React.FC<ButtonProps> = ({
       loadingState={loading}
       onClick={handleClick}
       variant={variant}
+      type={submit ? "submit" : "button"}
     >
       {children}
       {loading ? (

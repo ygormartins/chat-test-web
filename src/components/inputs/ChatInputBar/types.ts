@@ -1,5 +1,5 @@
 export interface ChatInputBarProps {
   messageText?: string;
-  onSendClick?: () => void;
+  onSendMessage?: () => void;
   setMessageText?: (message: string) => void;
 }
