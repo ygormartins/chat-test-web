@@ -27,8 +27,13 @@ const Home: React.FC = () => {
   /*---------- Contexts ----------*/
   const { status, user } = useContext(AuthContext);
   const { setContent, show } = useContext(ModalContext);
-  const { chats, selectedChat, setSelectedChat, markMessagesAsRead } =
-    useContext(ChatsContext);
+  const {
+    chats,
+    selectedChat,
+    currentChatUserInfo,
+    setSelectedChat,
+    markMessagesAsRead,
+  } = useContext(ChatsContext);
 
   /*---------- Handlers ----------*/
   const openChat = useCallback(
@@ -74,6 +79,7 @@ const Home: React.FC = () => {
           <ConversationScreen
             setSelectedChat={setSelectedChat}
             chatInfo={selectedChat!}
+            chatUserInfo={currentChatUserInfo}
           />
         ) : null}
       </ConversationPanel>

@@ -1,5 +1,5 @@
 /*---------- External ----------*/
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 /*---------- Components ----------*/
 import MessagesList from "@/components/lists/MessagesList";
@@ -11,11 +11,21 @@ import { ConversationContainer } from "./styles";
 /*---------- Types ----------*/
 import { ConversationScreenProps } from "./types";
 import ChatInputBar from "../../inputs/ChatInputBar";
+import { IChat } from "@/@types/chat";
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({
   chatInfo,
+  chatUserInfo,
   setSelectedChat = () => null,
 }) => {
+  /*---------- Memos ----------*/
+  const updatedUserInfo: IChat = useMemo(() => {
+    return {
+      ...chatInfo,
+      title: chatUserInfo?.name || chatInfo?.title,
+    } as IChat;
+  }, [chatInfo, chatUserInfo]);
+
   /*---------- States ----------*/
   const [messageText, setMessageText] = useState<string>("");
 
@@ -32,7 +42,10 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({
 
   return (
     <ConversationContainer onKeyDown={handleOnKeyDown}>
-      <ConversationHeader closeChat={handleCloseChat} chatInfo={chatInfo} />
+      <ConversationHeader
+        closeChat={handleCloseChat}
+        chatInfo={updatedUserInfo}
+      />
       <MessagesList />
       <ChatInputBar messageText={messageText} setMessageText={setMessageText} />
     </ConversationContainer>

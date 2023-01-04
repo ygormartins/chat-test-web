@@ -23,6 +23,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
   /*---------- Memos ----------*/
   const imageUrl = useMemo(() => {
     setIsLoadingImage(true);
+    setErrorLoading(false);
 
     return `${import.meta.env.VITE_PUBLIC_MEDIA_URL}/user/${userInfo?.sub}.png`;
   }, [userInfo?.sub]);
@@ -50,6 +51,7 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
     return (
       <Image
         src={imageUrl}
+        key={imageUrl}
         alt={userInfo?.name}
         onLoad={handleFetchSucceeded}
         onError={handleFetchFailed}

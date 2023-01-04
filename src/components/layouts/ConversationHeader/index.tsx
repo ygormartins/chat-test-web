@@ -15,6 +15,7 @@ import {
 } from "./styles";
 
 /*---------- Types ----------*/
+import { IUser } from "@/@types/user";
 import { ConversationHeaderProps } from "./types";
 
 const ConversationHeader: React.FC<ConversationHeaderProps> = ({
@@ -27,9 +28,21 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
 
     return chatInfo?.type === "group" ? "Group Chat" : "Private Conversation";
   }, [chatInfo?.type]);
+
+  const userInfo: Omit<IUser, "email"> | undefined = useMemo(() => {
+    if (!chatInfo?.sortKey || !chatInfo?.title) return undefined;
+
+    const userSub = chatInfo.sortKey.split("#")[1];
+
+    return {
+      name: chatInfo.title,
+      sub: userSub,
+    };
+  }, [chatInfo?.sortKey, chatInfo?.title]);
+
   return (
     <Container>
-      <ProfilePicture size={38} userInfo={{ name: "", sub: "" }} />
+      <ProfilePicture size={38} userInfo={userInfo} />
       <InfoSection>
         <TitleLabel>{chatInfo?.title}</TitleLabel>
         <SubtitleLabel>{chatSubtitle}</SubtitleLabel>

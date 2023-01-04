@@ -9,12 +9,14 @@ import ProfilePicture from "@/components/images/ProfilePicture";
 /*---------- Contexts ----------*/
 import { AuthContext } from "@/contexts/Auth";
 import { ModalContext } from "@/contexts/Modal";
+import { ChatsContext } from "@/contexts/Chats";
 
 /*---------- Services ----------*/
 import { getUserInfo } from "@/services/UsersService";
 
 /*---------- Types ----------*/
 import { IUser } from "@/@types/user";
+import { IChat } from "@/@types/chat";
 
 /*---------- Styles ----------*/
 import {
@@ -38,13 +40,14 @@ const NewConversationModal: React.FC = () => {
     useState<boolean>(false);
 
   /*---------- Contexts ----------*/
-  const { user } = useContext(AuthContext);
+  const { user: currentUser } = useContext(AuthContext);
   const { dismiss } = useContext(ModalContext);
+  const { setSelectedChat } = useContext(ChatsContext);
 
   /*---------- Memos ----------*/
   const canStartChat = useMemo(
-    () => userInfo && userInfo.sub !== user?.sub,
-    [userInfo, user?.sub]
+    () => userInfo && userInfo.sub !== currentUser?.sub,
+    [userInfo, currentUser?.sub]
   );
 
   /*---------- Handlers ----------*/
@@ -77,12 +80,25 @@ const NewConversationModal: React.FC = () => {
     setIsLoadingUser(false);
   }, [fetchUserInfo]);
 
-  const handleOnEnterPress = useCallback(() => {
-    if (!canStartChat) return;
+  const handleStartChat = useCallback(() => {
+    if (!canStartChat || !userInfo || !currentUser) return;
 
-    // TODO: start convo
-    console.log(userInfo);
-  }, [canStartChat, userInfo]);
+    const chatInfo: IChat = {
+      entityType: "chat-association",
+      partitionKey: `user#${currentUser.sub}`,
+      sortKey: `chat@user#${userInfo.sub}`,
+      title: userInfo.name,
+      type: "private",
+      gsi2PK: `user#${currentUser.sub}`,
+      gsi2SK: `chat-timestamp#${new Date().toISOString()}`,
+      unreadMessages: 0,
+      user: currentUser,
+      _userEmail: userInfo.email,
+    };
+
+    setSelectedChat?.(chatInfo);
+    dismiss?.();
+  }, [canStartChat, userInfo, currentUser, setSelectedChat, dismiss]);
 
   const handleOnKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Escape") {
@@ -120,7 +136,7 @@ const NewConversationModal: React.FC = () => {
         placeholder="Enter the user's email address"
         onTextChange={handleOnTextChange}
         onDebounce={handleOnDebounce}
-        onEnterPress={handleOnEnterPress}
+        onEnterPress={handleStartChat}
       />
       <PreviewContainer>
         {userInfo ? renderUserCard() : renderUserNotFound()}
@@ -129,7 +145,9 @@ const NewConversationModal: React.FC = () => {
         <Button onClick={dismiss} variant="secondary">
           Cancel
         </Button>
-        <Button disabled={!canStartChat}>Start chat</Button>
+        <Button disabled={!canStartChat} onClick={handleStartChat}>
+          Start chat
+        </Button>
       </ButtonsContainer>
     </ModalContainer>
   );

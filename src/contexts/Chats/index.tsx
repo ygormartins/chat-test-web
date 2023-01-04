@@ -10,6 +10,7 @@ import { AuthContext } from "@/contexts/Auth";
 import { IChat, IGroupInfo } from "@/@types/chat";
 import { ChatsProviderProps, GroupUsers, IChatsContext } from "./types";
 import { IUser } from "@/@types/user";
+import { getUserInfo } from "@/services/UsersService";
 
 export const ChatsContext = React.createContext<IChatsContext>({
   loadingChats: false,
@@ -126,19 +127,44 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     await Promise.all([getCurrentGroupInfo, getCurrentGroupUsers]);
   }, [getCurrentGroupInfo]);
 
-  const getPrivateChatDetails = async (): Promise<void> => {
+  const getPrivateChatDetails = useCallback(async (): Promise<void> => {
     setIsloadingChatUserInfo(true);
 
-    // TODO: get private chat info from API
-    const userInfo: IUser = {
-      sub: "0",
-      email: "user@email.com",
-      name: "José Games",
+    const currentUserInfo: IUser = {
+      email: selectedChat?._userEmail || "",
+      name: selectedChat?.title || "",
+      sub: selectedChat?.sortKey.split("#")[1] || "",
     };
 
-    setCurrentChatUserInfo(userInfo);
+    let newUserInfo: IUser;
+
+    try {
+      if (selectedChat?._userEmail) {
+        // If chatting with the user for the first time
+        const userChatDetails = await getUserInfo(selectedChat._userEmail);
+
+        newUserInfo = userChatDetails;
+      } else {
+        // If there's already chat info
+        // TODO: make API call to get info
+        newUserInfo = currentUserInfo;
+      }
+    } catch (_error) {
+      newUserInfo = currentUserInfo;
+    }
+
+    if (newUserInfo.name !== currentUserInfo.name) {
+      // TODO: make call to update chat object
+
+      setSelectedChat(
+        (currentChat) =>
+          ({ ...currentChat, title: newUserInfo.name } as IChat | undefined)
+      );
+    }
+
+    setCurrentChatUserInfo(newUserInfo);
     setIsloadingChatUserInfo(false);
-  };
+  }, [selectedChat?._userEmail, selectedChat?.sortKey, selectedChat?.title]);
 
   const markMessagesAsRead = (chat: IChat) => {
     setChats((previousChatsList) => {
@@ -167,23 +193,27 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
   }, [user, status, loadChats]);
 
   useEffect(() => {
-    if (!selectedChat) {
-      setCurrentChatUserInfo(undefined);
-      setCurrentGroupInfo(undefined);
-      setCurrentGroupUsers(undefined);
-      setIsLoadingGroupInfo(false);
-      setIsLoadingGroupUsers(false);
-      setIsloadingChatUserInfo(false);
+    setCurrentChatUserInfo(undefined);
+    setCurrentGroupInfo(undefined);
+    setCurrentGroupUsers(undefined);
+    setIsLoadingGroupInfo(false);
+    setIsLoadingGroupUsers(false);
+    setIsloadingChatUserInfo(false);
 
-      return;
-    }
+    if (!selectedChat?.sortKey || !selectedChat?.partitionKey) return;
 
     if (selectedChat.type === "group") {
       getGroupChatDetails();
     } else {
       getPrivateChatDetails();
     }
-  }, [selectedChat, getGroupChatDetails]);
+  }, [
+    selectedChat?.type,
+    selectedChat?.partitionKey,
+    selectedChat?.sortKey,
+    getGroupChatDetails,
+    getPrivateChatDetails,
+  ]);
 
   return (
     <ChatsContext.Provider

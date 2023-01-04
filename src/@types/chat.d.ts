@@ -29,6 +29,9 @@ export interface IChat extends IDatabaseItem {
   user: IUser;
   unreadMessages: number;
   lastMessage?: IChatLastMessage;
+
+  // Local only attrs
+  _userEmail?: string;
 }
 
 export interface IGroupInfo extends IDatabaseItem {
