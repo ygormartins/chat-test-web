@@ -21,7 +21,7 @@ import {
   ISignUp,
   ISignUpAuthResult,
   IUserSignupAttributes,
-} from "./types";
+} from "./@types";
 import { IUser } from "@/@types/user";
 
 export const signIn = async (

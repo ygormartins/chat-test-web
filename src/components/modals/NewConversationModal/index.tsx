@@ -58,7 +58,7 @@ const NewConversationModal: React.FC = () => {
     }
 
     try {
-      const result = await getUserInfo(emailInput);
+      const result = await getUserInfo({ email: emailInput });
       setUserNotFoundInCurrentSearch(false);
       return result;
     } catch (_error) {

@@ -141,13 +141,18 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     try {
       if (selectedChat?._userEmail) {
         // If chatting with the user for the first time
-        const userChatDetails = await getUserInfo(selectedChat._userEmail);
+        const userChatDetails = await getUserInfo({
+          email: selectedChat._userEmail,
+        });
 
         newUserInfo = userChatDetails;
       } else {
         // If there's already chat info
-        // TODO: make API call to get info
-        newUserInfo = currentUserInfo;
+        const userChatDetails = await getUserInfo({
+          sub: currentUserInfo.sub,
+        });
+
+        newUserInfo = userChatDetails;
       }
     } catch (_error) {
       newUserInfo = currentUserInfo;
