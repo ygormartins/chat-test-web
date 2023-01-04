@@ -1,6 +1,8 @@
 /*---------- External ----------*/
-import { getAccessToken } from "@/services/AuthService";
 import Axios from "axios";
+
+/*---------- Services ----------*/
+import { getAccessToken } from "@/services/AuthService";
 
 export const APIClient = Axios.create({
   baseURL: import.meta.env.VITE_PUBLIC_API_URL,

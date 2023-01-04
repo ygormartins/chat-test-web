@@ -5,12 +5,12 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/contexts/Auth";
 
 /*---------- Services ----------*/
+import { getUserInfo } from "@/services/UsersService";
 
 /*---------- Types ----------*/
+import { IUser } from "@/@types/user";
 import { IChat, IGroupInfo } from "@/@types/chat";
 import { ChatsProviderProps, GroupUsers, IChatsContext } from "./types";
-import { IUser } from "@/@types/user";
-import { getUserInfo } from "@/services/UsersService";
 
 export const ChatsContext = React.createContext<IChatsContext>({
   loadingChats: false,
