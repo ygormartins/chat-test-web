@@ -88,7 +88,7 @@ const NewConversationModal: React.FC = () => {
       partitionKey: `user#${currentUser.sub}`,
       sortKey: `chat@user#${userInfo.sub}`,
       title: userInfo.name,
-      type: "private",
+      chatType: "private",
       gsi2PK: `user#${currentUser.sub}`,
       gsi2SK: `chat-timestamp#${new Date().toISOString()}`,
       unreadMessages: 0,

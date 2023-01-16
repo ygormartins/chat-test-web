@@ -10,8 +10,8 @@ export type ChatType = "private" | "group";
 export interface IMessage extends IDatabaseItem {
   user: IUser;
   content: string;
-  type: MessageType;
   timestamp: string;
+  messageType: MessageType;
   imageUrl?: string;
 }
 
@@ -20,11 +20,11 @@ export interface IChatLastMessage {
   userSub: string;
   timestamp: string;
   preview: string;
-  type: MessageType;
+  messageType: MessageType;
 }
 
 export interface IChat extends IDatabaseItem {
-  type: ChatType;
+  chatType: ChatType;
   title: string;
   user: IUser;
   unreadMessages: number;

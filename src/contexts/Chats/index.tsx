@@ -4,6 +4,9 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 /*---------- Contexts ----------*/
 import { AuthContext } from "@/contexts/Auth";
 
+/*---------- Clients ----------*/
+import * as WebSocketClient from "@/clients/WebSocketClient";
+
 /*---------- Services ----------*/
 import { getUserInfo } from "@/services/UsersService";
 
@@ -11,6 +14,10 @@ import { getUserInfo } from "@/services/UsersService";
 import { IUser } from "@/@types/user";
 import { IChat, IGroupInfo } from "@/@types/chat";
 import { ChatsProviderProps, GroupUsers, IChatsContext } from "./types";
+import {
+  IWebSocketChatReceivedMessage,
+  IWebSocketMessage,
+} from "@/@types/websocket";
 
 export const ChatsContext = React.createContext<IChatsContext>({
   loadingChats: false,
@@ -45,18 +52,18 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     // TODO: make API call to load user chats
     setChats([
       {
-        entityType: "chat-association",
+        entityType: "chat",
         lastMessage: {
           preview: "This was the last message",
           timestamp: "2022-11-23T19:54:14Z",
-          type: "text",
+          messageType: "text",
           userName: "José Games",
           userSub: "0",
         },
         partitionKey: `user#${user.sub}`,
         sortKey: "chat@user#0",
         title: "José Games",
-        type: "private",
+        chatType: "private",
         gsi2PK: `user#${user.sub}`,
         gsi2SK: "chat-timestamp#2022-11-23T19:54:14Z",
         unreadMessages: 1,
@@ -65,18 +72,18 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
         user,
       },
       {
-        entityType: "chat-association",
+        entityType: "chat",
         lastMessage: {
           preview: "I've been putting up with your shit for way too long",
           timestamp: "2022-11-21T12:39:14Z",
-          type: "text",
+          messageType: "text",
           userName: user.name,
           userSub: user.sub,
         },
         partitionKey: `user#${user.sub}`,
         sortKey: "chat@user#1",
         title: "Kanye West",
-        type: "private",
+        chatType: "private",
         gsi2PK: `user#${user.sub}`,
         unreadMessages: 0,
         gsi2SK: "chat-timestamp#2022-11-21T12:39:14Z",
@@ -88,6 +95,18 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
 
     setIsLoadingChats(false);
   }, [status, user]);
+
+  const handleSortChatsList = (chatList: IChat[]): IChat[] => {
+    const sortedList = chatList.sort((a, b) => {
+      if (!a?.gsi2SK && !b?.gsi2SK) return -1;
+      if (!a?.gsi2SK) return 1;
+      if (!b?.gsi2SK) return -1;
+
+      return a.gsi2SK > b.gsi2SK ? -1 : a.gsi2SK < b.gsi2SK ? 1 : 0;
+    });
+
+    return sortedList;
+  };
 
   const getCurrentGroupInfo = useCallback(async (): Promise<void> => {
     setIsLoadingGroupInfo(true);
@@ -192,7 +211,109 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     // TODO: make API call to mark messages as read
   };
 
+  const handleNewChatMessage = useCallback(
+    async ({
+      data: messageData,
+    }: IWebSocketMessage<IWebSocketChatReceivedMessage>) => {
+      setChats((currentChatsList) => {
+        const filterSortKey =
+          messageData.chatType === "group"
+            ? `chat@group#${messageData.groupId}`
+            : `chat@user#${messageData.sender.sub}`;
+
+        let noOfUnreadMessages = 0;
+
+        const existingChatIndex = currentChatsList?.findIndex(
+          (chat) => chat.sortKey === filterSortKey
+        );
+
+        if (
+          typeof existingChatIndex !== "undefined" &&
+          existingChatIndex !== -1
+        ) {
+          const updatedChatsList = [...(currentChatsList || [])];
+          noOfUnreadMessages =
+            updatedChatsList[existingChatIndex].unreadMessages || 0;
+
+          if (selectedChat?.sortKey !== filterSortKey) {
+            noOfUnreadMessages += 1;
+          }
+
+          updatedChatsList[existingChatIndex] = {
+            ...updatedChatsList[existingChatIndex],
+            unreadMessages: noOfUnreadMessages,
+            gsi2PK: `user#${user?.sub}`,
+            gsi2SK: `chat-timestamp#${messageData.timestamp}`,
+            lastMessage: {
+              messageType: messageData.messageType,
+              preview: messageData.content,
+              timestamp: messageData.timestamp,
+              userName: messageData.sender.name,
+              userSub: messageData.sender.sub,
+            },
+          };
+
+          return handleSortChatsList(updatedChatsList);
+        }
+
+        const newChatsList: IChat[] = [
+          ...(currentChatsList || []),
+          {
+            entityType: "chat",
+            partitionKey: `user#${user?.sub}`,
+            sortKey: filterSortKey,
+            title: messageData.sender.name,
+            chatType: messageData.chatType,
+            unreadMessages: noOfUnreadMessages + 1,
+            gsi2PK: `user#${user?.sub}`,
+            gsi2SK: `chat-timestamp#${messageData.timestamp}`,
+            // gsi1PK: "group#uuid",
+            // gsi1SK: `user#${user.sub}`,
+            user: user as IUser,
+            lastMessage: {
+              messageType: messageData.messageType,
+              preview: messageData.content,
+              timestamp: messageData.timestamp,
+              userName: messageData.sender.name,
+              userSub: messageData.sender.sub,
+            },
+          },
+        ];
+
+        return handleSortChatsList(newChatsList);
+      });
+    },
+    [selectedChat, user]
+  );
+
+  const handleNewWebSocketMessage = useCallback(
+    async (message: IWebSocketMessage) => {
+      switch (message.action) {
+        case "receive-message":
+          await handleNewChatMessage(
+            message as IWebSocketMessage<IWebSocketChatReceivedMessage>
+          );
+          break;
+      }
+    },
+    [handleNewChatMessage]
+  );
+
+  const handleStartClient = useCallback(async () => {
+    try {
+      await WebSocketClient.startClient({
+        onMessage: handleNewWebSocketMessage,
+      });
+    } catch (_error) {}
+  }, [handleNewWebSocketMessage]);
+
   /*---------- Effects ----------*/
+  useEffect(() => {
+    if (status !== "AUTHENTICATED") return;
+
+    handleStartClient();
+  }, [handleStartClient, status]);
+
   useEffect(() => {
     loadChats();
   }, [user, status, loadChats]);
@@ -207,13 +328,13 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
 
     if (!selectedChat?.sortKey || !selectedChat?.partitionKey) return;
 
-    if (selectedChat.type === "group") {
+    if (selectedChat.chatType === "group") {
       getGroupChatDetails();
     } else {
       getPrivateChatDetails();
     }
   }, [
-    selectedChat?.type,
+    selectedChat?.chatType,
     selectedChat?.partitionKey,
     selectedChat?.sortKey,
     getGroupChatDetails,

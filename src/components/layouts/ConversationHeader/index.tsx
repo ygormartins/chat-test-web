@@ -24,10 +24,12 @@ const ConversationHeader: React.FC<ConversationHeaderProps> = ({
 }) => {
   /*---------- Memos ----------*/
   const chatSubtitle = useMemo(() => {
-    if (!chatInfo?.type) return "";
+    if (!chatInfo?.chatType) return "";
 
-    return chatInfo?.type === "group" ? "Group Chat" : "Private Conversation";
-  }, [chatInfo?.type]);
+    return chatInfo?.chatType === "group"
+      ? "Group Chat"
+      : "Private Conversation";
+  }, [chatInfo?.chatType]);
 
   const userInfo: Omit<IUser, "email"> | undefined = useMemo(() => {
     if (!chatInfo?.sortKey || !chatInfo?.title) return undefined;

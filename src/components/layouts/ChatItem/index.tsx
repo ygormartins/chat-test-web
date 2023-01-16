@@ -41,17 +41,17 @@ const ChatItem: React.FC<ChatsItemProps> = ({
 
     const senderPrefix = isUserSender
       ? "You: "
-      : chatInfo.type === "group"
+      : chatInfo.chatType === "group"
       ? `${chatInfo.lastMessage.userName}: `
       : "";
 
     const contentPreview =
-      chatInfo.lastMessage.type === "image"
+      chatInfo.lastMessage.messageType === "image"
         ? "Image"
         : chatInfo.lastMessage.preview;
 
     return `${senderPrefix}${contentPreview}`;
-  }, [chatInfo.lastMessage, chatInfo.type, user?.sub]);
+  }, [chatInfo.lastMessage, chatInfo.chatType, user?.sub]);
 
   const lastEventDate = useMemo(() => {
     if (!chatInfo.lastMessage?.timestamp) return "";
@@ -76,7 +76,7 @@ const ChatItem: React.FC<ChatsItemProps> = ({
 
   /*---------- Renders ----------*/
   const renderPicture = () => {
-    switch (chatInfo.type) {
+    switch (chatInfo.chatType) {
       case "group":
         return <ProfilePicture size={38} userInfo={{ name: "", sub: "" }} />;
       case "private":
