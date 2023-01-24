@@ -16,6 +16,7 @@ import { IChat } from "@/@types/chat";
 const ConversationScreen: React.FC<ConversationScreenProps> = ({
   chatInfo,
   chatUserInfo,
+  sendMessage = () => null,
   setSelectedChat = () => null,
 }) => {
   /*---------- Memos ----------*/
@@ -47,7 +48,11 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({
         chatInfo={updatedUserInfo}
       />
       <MessagesList />
-      <ChatInputBar messageText={messageText} setMessageText={setMessageText} />
+      <ChatInputBar
+        onSendMessage={sendMessage}
+        messageText={messageText}
+        setMessageText={setMessageText}
+      />
     </ConversationContainer>
   );
 };

@@ -29,8 +29,9 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
 
   /*---------- Handlers ----------*/
   const handleSendMessage = () => {
-    onSendMessage();
+    if (!messageText.trim().length) return;
 
+    onSendMessage(messageText);
     setIsButtonAnimating(true);
     setMessageText("");
   };
@@ -79,8 +80,8 @@ const ChatInputBar: React.FC<ChatInputBarProps> = ({
         <HorizontalSeparator />
         <ActionSection
           title="Send message"
-          aria-disabled={!messageText?.length}
-          disabled={!messageText?.length}
+          aria-disabled={!messageText?.trim().length}
+          disabled={!messageText?.trim().length}
           animating={isButtonAnimating}
           onClick={handleSendMessage}
           onAnimationEnd={stopAnimation}

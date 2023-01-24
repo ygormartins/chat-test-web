@@ -1,6 +1,7 @@
 /*---------- External ----------*/
-import React, { useCallback, useContext, useEffect } from "react";
+import { v4 as uuidV4 } from "uuid";
 import { useNavigate } from "react-router-dom";
+import React, { useCallback, useContext, useEffect } from "react";
 
 /*---------- Types ----------*/
 import { IChat } from "@/@types/chat";
@@ -31,6 +32,7 @@ const Home: React.FC = () => {
     chats,
     selectedChat,
     currentChatUserInfo,
+    sendMessage,
     setSelectedChat,
     markMessagesAsRead,
   } = useContext(ChatsContext);
@@ -48,6 +50,23 @@ const Home: React.FC = () => {
     setContent?.(<NewConversationModal />);
     show?.();
   }, [show, setContent]);
+
+  const handleSendMessage = useCallback(
+    (message: string) => {
+      if (!selectedChat?.sortKey || !sendMessage) return;
+
+      const userSub = selectedChat.sortKey.replace("chat@user#", "");
+
+      sendMessage({
+        chatType: "private",
+        content: message,
+        messageType: "text",
+        tempId: uuidV4(),
+        userSub,
+      });
+    },
+    [selectedChat?.sortKey, sendMessage]
+  );
 
   /*---------- Lists ----------*/
   const optionsList: OptionItem[] = [
@@ -77,6 +96,7 @@ const Home: React.FC = () => {
       <ConversationPanel>
         {selectedChat ? (
           <ConversationScreen
+            sendMessage={handleSendMessage}
             setSelectedChat={setSelectedChat}
             chatInfo={selectedChat!}
             chatUserInfo={currentChatUserInfo}

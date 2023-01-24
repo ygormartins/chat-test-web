@@ -5,12 +5,19 @@ import { getAccessToken } from "@/services/AuthService";
 import { IWebSocketMessage } from "@/@types/websocket";
 
 /*---------- Interfaces ----------*/
-interface StartClientInput {
+export interface StartClientInput {
   onConnect?: () => Promise<void>;
   onDisconnect?: () => Promise<void>;
   onMessage?: (message: IWebSocketMessage) => Promise<void>;
   onError?: () => Promise<void>;
 }
+
+export interface SendMessageInput {
+  action: string;
+  data: Record<string, unknown>;
+}
+
+let wss: WebSocket | undefined;
 
 export const startClient = async (input: StartClientInput) => {
   const idToken = await getAccessToken();
@@ -19,7 +26,7 @@ export const startClient = async (input: StartClientInput) => {
 
   const wsPath = `${import.meta.env.VITE_PUBLIC_WS_URL}?idToken=${idToken}`;
 
-  const wss = new WebSocket(wsPath);
+  wss = new WebSocket(wsPath);
 
   wss.addEventListener("open", async () => {
     await input.onConnect?.();
@@ -38,4 +45,12 @@ export const startClient = async (input: StartClientInput) => {
   wss.addEventListener("error", async () => {
     await input.onError?.();
   });
+};
+
+export const sendMessage = (input: SendMessageInput) => {
+  if (!wss) return;
+
+  const data = JSON.stringify(input);
+
+  wss.send(data);
 };

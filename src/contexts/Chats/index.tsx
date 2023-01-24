@@ -14,11 +14,17 @@ import { getUserChats } from "@/services/ChatsService";
 /*---------- Types ----------*/
 import { IUser } from "@/@types/user";
 import { IChat, IGroupInfo } from "@/@types/chat";
-import { ChatsProviderProps, GroupUsers, IChatsContext } from "./types";
+import {
+  ChatsProviderProps,
+  GroupUsers,
+  IChatsContext,
+  SendWSMessageInput,
+} from "./types";
 import {
   IWebSocketChatReceivedMessage,
   IWebSocketMessage,
 } from "@/@types/websocket";
+import { SendMessageInput } from "@/clients/WebSocketClient";
 
 export const ChatsContext = React.createContext<IChatsContext>({
   loadingChats: false,
@@ -249,6 +255,80 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     [selectedChat, user]
   );
 
+  const sendMessage = useCallback(
+    (input: SendWSMessageInput) => {
+      const message: SendMessageInput = {
+        action: "send-message",
+        data: { ...input },
+      };
+
+      WebSocketClient.sendMessage(message);
+
+      const messageTimestamp = new Date().toISOString();
+
+      setChats((currentChatsList) => {
+        const filterSortKey =
+          input.chatType === "group"
+            ? `chat@group#${""}`
+            : `chat@user#${input.userSub}`;
+
+        const existingChatIndex = currentChatsList?.findIndex(
+          (chat) => chat.sortKey === filterSortKey
+        );
+
+        if (
+          typeof existingChatIndex !== "undefined" &&
+          existingChatIndex !== -1
+        ) {
+          const updatedChatsList = [...(currentChatsList || [])];
+
+          updatedChatsList[existingChatIndex] = {
+            ...updatedChatsList[existingChatIndex],
+            unreadMessages: 0,
+            gsi2PK: `user#${user?.sub}`,
+            gsi2SK: `chat-timestamp#${messageTimestamp}`,
+            lastMessage: {
+              messageType: input.messageType,
+              preview: input.content,
+              timestamp: messageTimestamp,
+              userName: user?.name || "",
+              userSub: user?.sub || "",
+            },
+          };
+
+          return handleSortChatsList(updatedChatsList);
+        }
+
+        const newChatsList: IChat[] = [
+          ...(currentChatsList || []),
+          {
+            entityType: "chat",
+            partitionKey: `user#${user?.sub}`,
+            sortKey: filterSortKey,
+            title: selectedChat?.title || "",
+            chatType: input.chatType,
+            unreadMessages: 0,
+            gsi2PK: `user#${user?.sub}`,
+            gsi2SK: `chat-timestamp#${messageTimestamp}`,
+            // gsi1PK: "group#uuid",
+            // gsi1SK: `user#${user.sub}`,
+            user: user as IUser,
+            lastMessage: {
+              messageType: input.messageType,
+              preview: input.content,
+              timestamp: messageTimestamp,
+              userName: user?.name || "",
+              userSub: user?.sub || "",
+            },
+          },
+        ];
+
+        return handleSortChatsList(newChatsList);
+      });
+    },
+    [selectedChat?.title, user]
+  );
+
   const handleNewWebSocketMessage = useCallback(
     async (message: IWebSocketMessage) => {
       switch (message.action) {
@@ -317,6 +397,7 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
         currentGroupUsers,
         currentChatUserInfo,
         loadChats,
+        sendMessage,
         setSelectedChat,
         markMessagesAsRead,
       }}
