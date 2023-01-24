@@ -9,6 +9,7 @@ import * as WebSocketClient from "@/clients/WebSocketClient";
 
 /*---------- Services ----------*/
 import { getUserInfo } from "@/services/UsersService";
+import { getUserChats } from "@/services/ChatsService";
 
 /*---------- Types ----------*/
 import { IUser } from "@/@types/user";
@@ -49,49 +50,11 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
 
     setIsLoadingChats(true);
 
-    // TODO: make API call to load user chats
-    setChats([
-      {
-        entityType: "chat",
-        lastMessage: {
-          preview: "This was the last message",
-          timestamp: "2022-11-23T19:54:14Z",
-          messageType: "text",
-          userName: "José Games",
-          userSub: "0",
-        },
-        partitionKey: `user#${user.sub}`,
-        sortKey: "chat@user#0",
-        title: "José Games",
-        chatType: "private",
-        gsi2PK: `user#${user.sub}`,
-        gsi2SK: "chat-timestamp#2022-11-23T19:54:14Z",
-        unreadMessages: 1,
-        // gsi1PK: "group#uuid",
-        // gsi1SK: `user#${user.sub}`,
-        user,
-      },
-      {
-        entityType: "chat",
-        lastMessage: {
-          preview: "I've been putting up with your shit for way too long",
-          timestamp: "2022-11-21T12:39:14Z",
-          messageType: "text",
-          userName: user.name,
-          userSub: user.sub,
-        },
-        partitionKey: `user#${user.sub}`,
-        sortKey: "chat@user#1",
-        title: "Kanye West",
-        chatType: "private",
-        gsi2PK: `user#${user.sub}`,
-        unreadMessages: 0,
-        gsi2SK: "chat-timestamp#2022-11-21T12:39:14Z",
-        // gsi1PK: "group#uuid",
-        // gsi1SK: `user#${user.sub}`,
-        user,
-      },
-    ]);
+    try {
+      const { data: chatsList } = await getUserChats();
+
+      setChats(chatsList);
+    } catch (_error) {}
 
     setIsLoadingChats(false);
   }, [status, user]);
