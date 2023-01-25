@@ -39,9 +39,9 @@ const Home: React.FC = () => {
 
   /*---------- Handlers ----------*/
   const openChat = useCallback(
-    (chat: IChat) => {
+    async (chat: IChat) => {
       setSelectedChat?.(chat);
-      markMessagesAsRead?.(chat);
+      await markMessagesAsRead?.(chat);
     },
     [setSelectedChat, markMessagesAsRead]
   );

@@ -34,5 +34,5 @@ export interface IChatsContext {
   loadChats?: () => Promise<void>;
   sendMessage?: (input: SendWSMessageInput) => void;
   setSelectedChat?: (chat?: IChat) => void;
-  markMessagesAsRead?: (chat: IChat) => void;
+  markMessagesAsRead?: (chat: IChat) => Promise<void>;
 }

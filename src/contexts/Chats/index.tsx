@@ -9,7 +9,7 @@ import * as WebSocketClient from "@/clients/WebSocketClient";
 
 /*---------- Services ----------*/
 import { getUserInfo } from "@/services/UsersService";
-import { getUserChats } from "@/services/ChatsService";
+import { getUserChats, markAsRead } from "@/services/ChatsService";
 
 /*---------- Types ----------*/
 import { IUser } from "@/@types/user";
@@ -159,7 +159,7 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     setIsloadingChatUserInfo(false);
   }, [selectedChat?._userEmail, selectedChat?.sortKey, selectedChat?.title]);
 
-  const markMessagesAsRead = (chat: IChat) => {
+  const markMessagesAsRead = async (chat: IChat) => {
     setChats((previousChatsList) => {
       const chatsList = [...(previousChatsList || [])];
 
@@ -177,19 +177,21 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
       return chatsList;
     });
 
-    // TODO: make API call to mark messages as read
+    try {
+      await markAsRead(chat.sortKey);
+    } catch (_error) {}
   };
 
   const handleNewChatMessage = useCallback(
     async ({
       data: messageData,
     }: IWebSocketMessage<IWebSocketChatReceivedMessage>) => {
-      setChats((currentChatsList) => {
-        const filterSortKey =
-          messageData.chatType === "group"
-            ? `chat@group#${messageData.groupId}`
-            : `chat@user#${messageData.sender.sub}`;
+      const filterSortKey =
+        messageData.chatType === "group"
+          ? `chat@group#${messageData.groupId}`
+          : `chat@user#${messageData.sender.sub}`;
 
+      setChats((currentChatsList) => {
         let noOfUnreadMessages = 0;
 
         const existingChatIndex = currentChatsList?.findIndex(
@@ -251,6 +253,12 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
 
         return handleSortChatsList(newChatsList);
       });
+
+      if (selectedChat?.sortKey === filterSortKey) {
+        try {
+          await markAsRead(filterSortKey);
+        } catch (_error) {}
+      }
     },
     [selectedChat, user]
   );
@@ -266,12 +274,12 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
 
       const messageTimestamp = new Date().toISOString();
 
-      setChats((currentChatsList) => {
-        const filterSortKey =
-          input.chatType === "group"
-            ? `chat@group#${""}`
-            : `chat@user#${input.userSub}`;
+      const filterSortKey =
+        input.chatType === "group"
+          ? `chat@group#${""}`
+          : `chat@user#${input.userSub}`;
 
+      setChats((currentChatsList) => {
         const existingChatIndex = currentChatsList?.findIndex(
           (chat) => chat.sortKey === filterSortKey
         );
