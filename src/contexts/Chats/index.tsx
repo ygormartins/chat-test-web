@@ -9,11 +9,15 @@ import * as WebSocketClient from "@/clients/WebSocketClient";
 
 /*---------- Services ----------*/
 import { getUserInfo } from "@/services/UsersService";
-import { getUserChats, markAsRead } from "@/services/ChatsService";
+import {
+  getChatMessages,
+  getUserChats,
+  markAsRead,
+} from "@/services/ChatsService";
 
 /*---------- Types ----------*/
 import { IUser } from "@/@types/user";
-import { IChat, IGroupInfo } from "@/@types/chat";
+import { IChat, IGroupInfo, IMessage } from "@/@types/chat";
 import {
   ChatsProviderProps,
   GroupUsers,
@@ -27,6 +31,7 @@ import {
 import { SendMessageInput } from "@/clients/WebSocketClient";
 
 export const ChatsContext = React.createContext<IChatsContext>({
+  loadingChatMessages: false,
   loadingChats: false,
   loadingGroupInfo: false,
   loadingGroupUsers: false,
@@ -39,6 +44,8 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
 
   /*---------- Public States ----------*/
   const [loadingChats, setIsLoadingChats] = useState<boolean>(false);
+  const [loadingChatMessages, setIsLoadingChatMessages] =
+    useState<boolean>(false);
   const [loadingGroupInfo, setIsLoadingGroupInfo] = useState<boolean>(false);
   const [loadingGroupUsers, setIsLoadingGroupUsers] = useState<boolean>(false);
   const [loadingChatUserInfo, setIsloadingChatUserInfo] =
@@ -46,6 +53,7 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
 
   const [chats, setChats] = useState<IChat[]>();
   const [selectedChat, setSelectedChat] = useState<IChat>();
+  const [currentChatMessages, setCurrentChatMessages] = useState<IMessage[]>();
   const [currentGroupInfo, setCurrentGroupInfo] = useState<IGroupInfo>();
   const [currentGroupUsers, setCurrentGroupUsers] = useState<GroupUsers>();
   const [currentChatUserInfo, setCurrentChatUserInfo] = useState<IUser>();
@@ -96,7 +104,23 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     setIsLoadingGroupInfo(false);
   }, [user]);
 
-  const getCurrentGroupUsers = async (): Promise<void> => {
+  const getCurrentChatMessages = useCallback(async (): Promise<void> => {
+    if (!selectedChat?.sortKey) return;
+
+    setIsLoadingChatMessages(true);
+
+    try {
+      const { data: messagesList } = await getChatMessages(
+        selectedChat.sortKey
+      );
+
+      setCurrentChatMessages(messagesList);
+    } catch (_error) {}
+
+    setIsLoadingChatMessages(false);
+  }, [selectedChat?.sortKey]);
+
+  const getCurrentGroupUsers = useCallback(async (): Promise<void> => {
     setIsLoadingGroupUsers(true);
 
     // TODO: make API call to load group users
@@ -109,13 +133,13 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
 
     setCurrentGroupUsers(users);
     setIsLoadingGroupUsers(false);
-  };
+  }, []);
 
   const getGroupChatDetails = useCallback(async (): Promise<void> => {
-    await Promise.all([getCurrentGroupInfo, getCurrentGroupUsers]);
-  }, [getCurrentGroupInfo]);
+    await Promise.all([getCurrentGroupInfo(), getCurrentGroupUsers()]);
+  }, [getCurrentGroupInfo, getCurrentGroupUsers]);
 
-  const getPrivateChatDetails = useCallback(async (): Promise<void> => {
+  const getPrivateChatUserInfo = useCallback(async (): Promise<void> => {
     setIsloadingChatUserInfo(true);
 
     const currentUserInfo: IUser = {
@@ -158,6 +182,10 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     setCurrentChatUserInfo(newUserInfo);
     setIsloadingChatUserInfo(false);
   }, [selectedChat?._userEmail, selectedChat?.sortKey, selectedChat?.title]);
+
+  const getPrivateChatDetails = useCallback(async () => {
+    await Promise.all([getPrivateChatUserInfo(), getCurrentChatMessages()]);
+  }, [getCurrentChatMessages, getPrivateChatUserInfo]);
 
   const markMessagesAsRead = async (chat: IChat) => {
     setChats((previousChatsList) => {
@@ -255,6 +283,29 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
       });
 
       if (selectedChat?.sortKey === filterSortKey) {
+        setCurrentChatMessages((messages) => {
+          const sortedSubsList = [messageData.sender.sub, user?.sub].sort(
+            (a, b) => {
+              if (!a || !b) return 0;
+              return a > b ? -1 : 1;
+            }
+          );
+
+          const messagePK = `users@${sortedSubsList.join("|")}`;
+
+          const newMessage: IMessage = {
+            content: messageData.content,
+            entityType: "message",
+            messageType: messageData.messageType,
+            partitionKey: messagePK,
+            sortKey: messageData.messageId,
+            timestamp: messageData.timestamp,
+            user: messageData.sender,
+          };
+
+          return [newMessage, ...(messages || [])];
+        });
+
         try {
           await markAsRead(filterSortKey);
         } catch (_error) {}
@@ -333,6 +384,27 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
 
         return handleSortChatsList(newChatsList);
       });
+
+      setCurrentChatMessages((messages) => {
+        const sortedSubsList = [input.userSub, user?.sub].sort((a, b) => {
+          if (!a || !b) return 0;
+          return a > b ? -1 : 1;
+        });
+
+        const messagePK = `users@${sortedSubsList.join("|")}`;
+
+        const newMessage: IMessage = {
+          content: input.content,
+          entityType: "message",
+          messageType: input.messageType,
+          partitionKey: messagePK,
+          sortKey: input.tempId,
+          timestamp: new Date().toISOString(),
+          user: user as IUser,
+        };
+
+        return [newMessage, ...(messages || [])];
+      });
     },
     [selectedChat?.title, user]
   );
@@ -373,6 +445,7 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     setCurrentChatUserInfo(undefined);
     setCurrentGroupInfo(undefined);
     setCurrentGroupUsers(undefined);
+    setCurrentChatMessages(undefined);
     setIsLoadingGroupInfo(false);
     setIsLoadingGroupUsers(false);
     setIsloadingChatUserInfo(false);
@@ -396,10 +469,12 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     <ChatsContext.Provider
       value={{
         loadingChats,
+        loadingChatMessages,
         loadingGroupInfo,
         loadingGroupUsers,
         loadingChatUserInfo,
         chats,
+        currentChatMessages,
         selectedChat,
         currentGroupInfo,
         currentGroupUsers,

@@ -2,7 +2,7 @@
 import { APIClient } from "@/clients/APIClient";
 
 /*---------- Types ----------*/
-import { IChat } from "@/@types/chat";
+import { IChat, IMessage } from "@/@types/chat";
 import { IStatusResponse } from "@/@types/api";
 
 export const getUserChats = async (): Promise<{ data: IChat[] }> => {
@@ -19,6 +19,21 @@ export const markAsRead = async (
       chatSortKey,
     },
   });
+
+  return data;
+};
+
+export const getChatMessages = async (
+  chatSortKey: string
+): Promise<{ data: IMessage[] }> => {
+  const { data } = await APIClient.get<{ data: IMessage[] }>(
+    "/chats/messages",
+    {
+      params: {
+        chatSortKey,
+      },
+    }
+  );
 
   return data;
 };

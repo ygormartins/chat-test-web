@@ -31,6 +31,7 @@ const Home: React.FC = () => {
   const {
     chats,
     selectedChat,
+    currentChatMessages,
     currentChatUserInfo,
     sendMessage,
     setSelectedChat,
@@ -100,6 +101,7 @@ const Home: React.FC = () => {
             setSelectedChat={setSelectedChat}
             chatInfo={selectedChat!}
             chatUserInfo={currentChatUserInfo}
+            chatMessagesList={currentChatMessages}
           />
         ) : null}
       </ConversationPanel>

@@ -3,7 +3,13 @@ import { ReactNode } from "react";
 
 /*---------- Types ----------*/
 import { IUser } from "@/@types/user";
-import { ChatType, IChat, IGroupInfo, MessageType } from "@/@types/chat";
+import {
+  ChatType,
+  IChat,
+  IGroupInfo,
+  IMessage,
+  MessageType,
+} from "@/@types/chat";
 
 export type GroupUsers = { [key: string]: Omit<IUser, "sub"> };
 
@@ -22,11 +28,13 @@ export interface ChatsProviderProps {
 
 export interface IChatsContext {
   loadingChats: boolean;
+  loadingChatMessages: boolean;
   loadingGroupInfo: boolean;
   loadingGroupUsers: boolean;
   loadingChatUserInfo: boolean;
   chats?: IChat[];
   selectedChat?: IChat;
+  currentChatMessages?: IMessage[];
   currentGroupInfo?: IGroupInfo;
   currentGroupUsers?: GroupUsers;
   currentChatUserInfo?: IUser;
