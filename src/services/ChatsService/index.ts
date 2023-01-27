@@ -14,8 +14,10 @@ export const getUserChats = async (): Promise<{ data: IChat[] }> => {
 export const markAsRead = async (
   chatSortKey: string
 ): Promise<IStatusResponse> => {
-  const { data } = await APIClient.put<IStatusResponse>("/chats/read", {
-    chatSortKey,
+  const { data } = await APIClient.put<IStatusResponse>("/chats/read", null, {
+    params: {
+      chatSortKey,
+    },
   });
 
   return data;
