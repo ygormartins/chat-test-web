@@ -22,7 +22,7 @@ const flightAnimation = keyframes`
 
 export const ExternalContainer = styled.div`
   display: flex;
-  padding: 0.5rem 1.25rem 1.25rem;
+  padding: 0.75rem 1.25rem 1.25rem;
 `;
 
 export const InternalContainer = styled.div`

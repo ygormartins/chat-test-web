@@ -102,6 +102,7 @@ const Home: React.FC = () => {
             chatInfo={selectedChat!}
             chatUserInfo={currentChatUserInfo}
             chatMessagesList={currentChatMessages}
+            user={user}
           />
         ) : null}
       </ConversationPanel>

@@ -14,6 +14,7 @@ import ChatInputBar from "../../inputs/ChatInputBar";
 import { IChat } from "@/@types/chat";
 
 const ConversationScreen: React.FC<ConversationScreenProps> = ({
+  user,
   chatInfo,
   chatUserInfo,
   chatMessagesList = [],
@@ -48,7 +49,7 @@ const ConversationScreen: React.FC<ConversationScreenProps> = ({
         closeChat={handleCloseChat}
         chatInfo={updatedUserInfo}
       />
-      <MessagesList messages={chatMessagesList} />
+      <MessagesList user={user} messages={chatMessagesList} />
       <ChatInputBar
         onSendMessage={sendMessage}
         messageText={messageText}

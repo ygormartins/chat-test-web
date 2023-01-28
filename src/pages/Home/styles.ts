@@ -28,6 +28,7 @@ export const ChatsPanel = styled(Resizable).attrs({
   background-color: white;
   box-shadow: 0 0 0.25rem 0.125rem #00000016;
   overflow: hidden;
+  z-index: 2;
   display: flex;
   flex-direction: column;
 `;

@@ -1,32 +1,33 @@
 /*---------- External ----------*/
 import React from "react";
 
+/*---------- Messages ----------*/
+import MessageItem from "@/components/layouts/MessageItem";
+
 /*---------- Styles ----------*/
 import { ListContainer } from "./styles";
 
 /*---------- Types ----------*/
 import { MessagesListProps } from "./types";
 
-const MessagesList: React.FC<MessagesListProps> = ({ messages }) => {
-  return (
-    <ListContainer>
-      {messages.map((message) => (
-        <React.Fragment key={message.sortKey}>
-          <p>
-            +----------------------------------------------------------------------------------------------
-          </p>
-          <p>{`| Content: ${message.content}`}</p>
-          <p>{`| User Name: ${message.user.name}`}</p>
-          <p>{`| User ID: ${message.user.sub}`}</p>
-          <p>{`| Timestamp: ${message.timestamp}`}</p>
-          <p>{`| Message ID: ${message.sortKey}`}</p>
-          <p>
-            +----------------------------------------------------------------------------------------------
-          </p>
-        </React.Fragment>
-      ))}
-    </ListContainer>
-  );
+const MessagesList: React.FC<MessagesListProps> = ({ messages, user }) => {
+  /*---------- Renders ----------*/
+  const renderMessages = () =>
+    messages.map((message, index, array) => {
+      const isNextMessageFromSameUser =
+        message.user.sub === array[index + 1]?.user.sub;
+
+      return (
+        <MessageItem
+          message={message}
+          sentByUser={user?.sub === message.user.sub}
+          displayProfilePicture={!isNextMessageFromSameUser}
+          key={message.sortKey}
+        />
+      );
+    });
+
+  return <ListContainer>{renderMessages()}</ListContainer>;
 };
 
 export default MessagesList;

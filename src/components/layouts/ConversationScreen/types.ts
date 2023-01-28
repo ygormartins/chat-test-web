@@ -7,5 +7,6 @@ export interface ConversationScreenProps {
   chatMessagesList?: IMessage[];
   sendMessage?: (content: string) => void;
   setSelectedChat?: (chatInfo?: IChat) => void;
+  user?: IUser;
   chatUserInfo?: IUser;
 }
