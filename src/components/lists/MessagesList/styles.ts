@@ -6,4 +6,5 @@ export const ListContainer = styled.ul`
   flex-direction: column-reverse;
   flex-grow: 1;
   overflow-y: auto;
+  padding-top: 1.25rem;
 `;

@@ -3,13 +3,13 @@ import styled, { css } from "styled-components";
 import { ButtonVariant } from "./types";
 
 const PrimaryStyle = css<{ loadingState: boolean }>`
-  background-color: teal;
+  background-color: #327560;
   color: ${({ loadingState }) => (loadingState ? "transparent" : "white")};
 `;
 
 const SecondaryStyle = css<{ loadingState: boolean }>`
   background-color: transparent;
-  color: ${({ loadingState }) => (loadingState ? "transparent" : "teal")};
+  color: ${({ loadingState }) => (loadingState ? "transparent" : "#327560")};
 `;
 
 const DangerStyle = css<{ loadingState: boolean }>`

@@ -426,6 +426,7 @@ export const ChatsProvider: React.FC<ChatsProviderProps> = ({ children }) => {
     try {
       await WebSocketClient.startClient({
         onMessage: handleNewWebSocketMessage,
+        onDisconnect: handleStartClient,
       });
     } catch (_error) {}
   }, [handleNewWebSocketMessage]);

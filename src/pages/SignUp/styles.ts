@@ -34,7 +34,7 @@ export const FieldsArea = styled.div`
 export const SignInLink = styled(Link)`
   align-self: center;
   font-weight: bold;
-  color: teal;
+  color: #327560;
   text-decoration: none;
 
   &:hover {

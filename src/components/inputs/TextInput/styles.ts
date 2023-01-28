@@ -12,7 +12,7 @@ export const InputLabel = styled.label`
   font-size: 0.75rem;
   margin-left: 0.5rem;
   font-weight: bold;
-  color: teal;
+  color: #327560;
 `;
 
 export const InputFieldContainer = styled.div`

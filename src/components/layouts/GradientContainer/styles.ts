@@ -8,8 +8,8 @@ export const Container = styled.div`
   justify-content: center;
   align-items: center;
   padding: 1.5rem;
-  background: teal;
-  background: linear-gradient(45deg, teal 0%, aquamarine 100%);
+  background: #327560;
+  background: linear-gradient(45deg, #327560 0%, aquamarine 100%);
 
   @media screen and (max-width: 800px) {
     padding: 0;

@@ -25,7 +25,7 @@ export const ModalContainer = styled.div.attrs({ tabIndex: 0 })`
 `;
 
 export const ModalTitle = styled.h3`
-  color: teal;
+  color: #327560;
   font-size: 1.25rem;
   margin-bottom: 2rem;
 `;

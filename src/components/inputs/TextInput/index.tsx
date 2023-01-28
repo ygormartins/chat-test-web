@@ -75,7 +75,7 @@ const TextInput: React.FC<TextInputProps> = ({
               height={24}
               visible={loading}
               width={24}
-              colors={["teal", "teal", "teal", "teal", "teal"]}
+              colors={["#327560", "#327560", "#327560", "#327560", "#327560"]}
             />
           </InputRightItemContainer>
         ) : null}

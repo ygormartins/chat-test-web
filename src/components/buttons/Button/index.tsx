@@ -29,7 +29,7 @@ const Button: React.FC<ButtonProps> = ({
       case "danger":
         return "white";
       case "secondary":
-        return "teal";
+        return "#327560";
     }
   }, [variant]);
 

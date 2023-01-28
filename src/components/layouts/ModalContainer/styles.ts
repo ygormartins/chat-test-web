@@ -18,6 +18,7 @@ export const ModalBackground = styled.div`
   padding: 0 4rem;
   background-color: #00000000;
   backdrop-filter: blur(4px);
+  z-index: 100;
   display: flex;
   justify-content: center;
   align-items: center;
