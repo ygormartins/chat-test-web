@@ -7,13 +7,13 @@ import * as AuthService from "@/services/AuthService";
 import * as StorageService from "@/services/StorageService";
 
 /*---------- Types ----------*/
+import { IUser } from "@/@types/user";
+import { AuthProviderProps, AUTH_STATUS, IAuthContext } from "./types";
 import {
   ILoginAuthResult,
   ISignUpAuthResult,
-  IUser,
   IUserSignupAttributes,
-} from "@/@types/auth";
-import { AuthProviderProps, AUTH_STATUS, IAuthContext } from "./@types";
+} from "@/services/AuthService/types";
 
 export const AuthContext = React.createContext<IAuthContext>({
   status: "LOADING",

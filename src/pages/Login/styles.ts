@@ -2,7 +2,7 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
-export const FormContainer = styled.div`
+export const FormContainer = styled.form`
   width: 40%;
   max-width: 600px;
   padding: 2rem 1rem;
@@ -16,6 +16,13 @@ export const FormContainer = styled.div`
   @media screen and (max-width: 1200px) {
     width: 100%;
   }
+
+  @media screen and (max-width: 800px) {
+    border-radius: 0;
+    height: 100%;
+    max-width: unset;
+    padding: 4rem 2rem;
+  }
 `;
 
 export const FieldsArea = styled.div`
@@ -27,7 +34,7 @@ export const FieldsArea = styled.div`
 export const SignUpLink = styled(Link)`
   align-self: center;
   font-weight: bold;
-  color: teal;
+  color: #327560;
   text-decoration: none;
 
   &:hover {

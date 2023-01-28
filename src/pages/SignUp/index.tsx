@@ -7,8 +7,8 @@ import swal from "sweetalert2";
 import { AuthContext } from "@/contexts/Auth";
 
 /*---------- Components ----------*/
-import Button from "@/components/Button";
-import TextInput from "@/components/TextInput";
+import Button from "@/components/buttons/Button";
+import TextInput from "@/components/inputs/TextInput";
 
 /*---------- Styles ----------*/
 import { FieldsArea, FormContainer, SignInLink } from "./styles";
@@ -46,6 +46,16 @@ const SignUp: React.FC = () => {
       title: "Error!",
       text: errorMessage,
     });
+  };
+
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (confirmCodeStep) {
+      handleConfirmEmail();
+    } else {
+      handleSignUp();
+    }
   };
 
   const handleSignUp = useCallback(async () => {
@@ -104,6 +114,7 @@ const SignUp: React.FC = () => {
         <TextInput
           value={name}
           onTextChange={setName}
+          autoFocus
           type="text"
           label="Full name"
           placeholder="Enter your name"
@@ -130,7 +141,7 @@ const SignUp: React.FC = () => {
           placeholder="Confirm your new password"
         />
       </FieldsArea>
-      <Button loading={isLoadingSignup} onClick={handleSignUp}>
+      <Button loading={isLoadingSignup} submit>
         Sign up
       </Button>
       <SignInLink to="/login">I already have an account</SignInLink>
@@ -144,19 +155,20 @@ const SignUp: React.FC = () => {
         <TextInput
           value={confirmationCode}
           onTextChange={setConfirmationCode}
+          autoFocus
           type="text"
           label="Confirmation code"
           placeholder="Enter the confirmation code you've received in your inbox"
         />
       </FieldsArea>
-      <Button loading={isLoadingConfirmation} onClick={handleConfirmEmail}>
+      <Button loading={isLoadingConfirmation} submit>
         Confirm
       </Button>
     </>
   );
 
   return (
-    <FormContainer>
+    <FormContainer onSubmit={handleFormSubmit}>
       {!confirmCodeStep ? renderSignUpForm() : renderConfirmCodeForm()}
     </FormContainer>
   );
